@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-red: #ff3b3f; /* Màu đỏ nút Redmine */
+    --bg-light: #f9f9f9;
+    --text-dark: #333333;
+    --text-gray: #666666;
+    --border-color: #dddddd;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+html {
+    font-size: 62.5%; /* 1rem = 10px */
+}
+
+body {
+    font-size: 1.6rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Các class dùng chung */
+.required {
+    color: red;
+    margin-left: 0.3rem;
+}
