@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "@/pages/home/Home.vue";
 import Login from "@/pages/auth/Login.vue";
 import ForgotPassword from "@/pages/auth/ForgotPassword.vue";
 import ResetPassword from "@/pages/auth/ResetPassword.vue";
 import AuthLayout from "@/layouts/AuthLayout/AuthLayout.vue";
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",

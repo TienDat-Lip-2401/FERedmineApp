@@ -12,6 +12,7 @@ export default defineConfig({
     vueJsx(),
     vueDevTools(),
   ],
+  base: '/FERedmineApp/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
