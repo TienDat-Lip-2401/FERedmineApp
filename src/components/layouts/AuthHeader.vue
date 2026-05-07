@@ -18,6 +18,7 @@
     justify-content: center;
     align-items: center;
     border-bottom: 0.1rem solid #eeeeee;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 .logo-wrapper {
   display: flex;

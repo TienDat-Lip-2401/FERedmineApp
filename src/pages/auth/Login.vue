@@ -52,7 +52,7 @@ const handleLogin = () => {
       </div>
       <BaseButton text="Login" type="submit" className="btn-login" />
       <div class="auth-footer">
-        <router-link to="/forgot-password" class="auth-link"> Forgot your password </router-link>
+        <router-link to="/auth/forgot-password" class="auth-link"> Forgot your password </router-link>
       </div>
     </form>
   </div>
