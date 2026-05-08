@@ -6,7 +6,7 @@ import IconPerformance from "@/assets/icons/Perfomance.svg";
 import IconUsers from "@/assets/icons/Setting.svg";
 import IconPositions from "@/assets/icons/Setting.svg";
 import IconRoles from "@/assets/icons/Setting.svg";
-
+import { ref } from "vue";
 const menuItems = [
   { name: "Projects", icon: IconProject, active: true, path: "/projects" },
   { name: "Tasks", icon: IconTasks, active: false, path: "/tasks" },
@@ -16,6 +16,13 @@ const menuItems = [
   { name: "Positions", icon: IconPositions, active: false, path: "/positions" },
   { name: "Roles", icon: IconRoles, active: false, path: "/roles" },
 ];
+const activeName = ref(menuItems[0].name);
+const handleActiveItem = (name) => {
+  activeName.value = name;
+  // menuItems.forEach((item) => {
+  //   item.active = item.name === name;
+  // });
+};
 </script>
 
 <template>
@@ -25,11 +32,12 @@ const menuItems = [
         class=""
         v-for="item in menuItems"
         :key="item.name"
-        :class="['nav-item', { active: item.active }]"
+        :class="['nav-item', { active: activeName === item.name }]"
         :to="item.path"
+        @click="handleActiveItem(item.name)"
       >
         <span class="nav-icon">
-         <img :src="item.icon" alt="Icon" class="icon" />
+          <img :src="item.icon" alt="Icon" class="icon" />
         </span>
         <span class="nav-text">{{ item.name }}</span>
       </RouterLink>
@@ -44,27 +52,46 @@ const menuItems = [
   border-right: 1px solid #eee;
   padding: 2rem 0;
   background-color: #fff;
-  box-shadow:
-    rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.02);
 }
 .nav-item {
   display: flex;
   align-items: center;
   padding: 1.5rem 3rem;
   gap: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s;
-  .nav-text {
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 22px;
-    letter-spacing: 1%;
-  }
-  nav-icon.icon {
-    width: 24px;
-    height: 24px;
-    color: #5D7285;
-  }
+  color: #5D7285;
+  transition: all 0.3s ease;
+}
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+.icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.nav-text {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.01em;
+}
+.nav-item.active {
+  background-color: #FFF5F5;
+  border-right: 3px solid #FF383C;
+}
+
+.nav-item.active .nav-text {
+  color: #FF383C;
+  font-weight: 500;
+}
+
+/* Hiệu ứng Hover để người dùng biết là bấm được */
+.nav-item:hover:not(.active) {
+  background-color: #f9f9f9;
 }
 </style>

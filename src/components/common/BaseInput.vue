@@ -12,6 +12,14 @@ defineProps({
     type: Boolean,
     default: false
   },
+  width: {
+    type: String,
+    default: '100%' // Mặc định chiếm hết chiều rộng cha
+  },
+  height: {
+    type: String,
+    default: '4.8rem' // Chiều cao mặc định
+  },
   id: String,
   error: String
 });
@@ -43,7 +51,7 @@ defineEmits(['update:modelValue']);
 <style scoped>
 .field-container {
   margin-bottom: 2rem;
-  width: 100%;
+  width: v-bind(width);
 }
 
 .field-label {
@@ -63,11 +71,12 @@ defineEmits(['update:modelValue']);
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .field-input {
   width: 100%;
-  height: 4.8rem;
+  height: v-bind(height);
   padding: 0 1.5rem;
   border: 1px solid #ccc;
   border-radius: 0.8rem;
