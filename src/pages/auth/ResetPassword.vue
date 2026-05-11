@@ -60,7 +60,7 @@ const toggleConfirmPassword = () => {
         </button>
       </div>
 
-      <BaseButton text="Save" type="submit" />
+      <BaseButton text="Save" type="submit" variant="auth" />
 
       <div class="auth-footer">
         <router-link to="/auth/login" class="auth-link"> Back to Login </router-link>

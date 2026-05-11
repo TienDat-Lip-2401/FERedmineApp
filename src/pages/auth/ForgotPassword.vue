@@ -25,7 +25,7 @@ const handleSend = () => {
         required
       />
 
-      <BaseButton text="Send" type="submit" />
+      <BaseButton text="Send" type="submit" class="btn-auth"/>
 
       <div class="auth-footer">
         <router-link to="/auth/login" class="auth-link">

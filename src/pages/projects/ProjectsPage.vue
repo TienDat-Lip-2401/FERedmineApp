@@ -3,7 +3,8 @@ import { ref, computed, watch } from "vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import BasePagination from "@/components/common/BasePagination.vue";
 import ProjectCard from "@/components/project/ProjectCard.vue";
-import { projectList } from "@/mock/projects.js";
+import { useProjectStore } from "@/stores/projectStore.js";
+const projectStore = useProjectStore();
 const currentPage = ref(1);
 const searchQuery = ref("");
 const itemsPerPage = ref(6);
@@ -20,12 +21,15 @@ const paginatedProjects = computed(() => {
   return filteredProjects.value.slice(start, end);
 });
 const filteredProjects = computed(() => {
-  return projectList.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
-  );
+  const list = projectStore.projects || [];
+  const query = (searchQuery.value || "").toLowerCase();
+  return list.filter((item) => {
+    const projectTitle = (item.title || "").toLowerCase();
+    return projectTitle.includes(query);
+  });
 });
 // 4. Tính tổng số trang (Dùng Math.ceil cho ngắn gọn thay vì if/else)
-const totalItems = computed(() => filteredProjects.value.length);
+const totalItems = computed(() => projectStore.projects.length);
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
 </script>
 

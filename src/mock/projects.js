@@ -1,11 +1,11 @@
 export const projectList = [
   {
     id: 1,
-    name: "Jobmatching",
+    title: "Jobmatching",
     code: "PROJ-01",
     pmName: "PM-01",
     status: "Active",
-    timeline: "01/07/2025 - 30/06/2026",
+    timeline: "01-07-2025 - 30-06-2026",
     members: [
       { id: 1, name: "Quan", avatar: "https://i.pravatar.cc/150?u=1" },
       { id: 2, name: "Dat", avatar: "https://i.pravatar.cc/150?u=2" },
@@ -19,11 +19,11 @@ export const projectList = [
   },
   {
     id: 2,
-    name: "E-Learning Platform",
+    title: "E-Learning Platform",
     code: "PROJ-02",
     pmName: "PM-02",
-    status: "Active",
-    timeline: "15/08/2025 - 15/08/2026",
+    status: "Pending",
+    timeline: "15-08-2025 - 15-08-2026",
     members: [
       { id: 4, name: "An", avatar: "https://i.pravatar.cc/150?u=4" },
       { id: 5, name: "Binh", avatar: "https://i.pravatar.cc/150?u=5" },
@@ -36,11 +36,11 @@ export const projectList = [
   },
   {
     id: 3,
-    name: "Velvet Store E-commerce",
+    title: "Velvet Store E-commerce",
     code: "PROJ-03",
     pmName: "PM-01",
-    status: "Pending",
-    timeline: "01/01/2026 - 31/12/2026",
+    status: "Active",
+    timeline: "01-01-2026 - 31-12-2026",
     members: [
       { id: 1, name: "Quan", avatar: "https://i.pravatar.cc/150?u=1" },
       { id: 6, name: "Hung", avatar: "https://i.pravatar.cc/150?u=6" },
@@ -53,11 +53,11 @@ export const projectList = [
   },
   {
     id: 4,
-    name: "AI Chatbot Integration",
+    title: "AI Chatbot Integration",
     code: "PROJ-04",
     pmName: "PM-03",
     status: "Active",
-    timeline: "10/10/2025 - 10/10/2026",
+    timeline: "10-10-2025 - 10-10-2026",
     members: [
       { id: 7, name: "Mai", avatar: "https://i.pravatar.cc/150?u=7" },
       { id: 8, name: "Chien", avatar: "https://i.pravatar.cc/150?u=8" },
@@ -74,11 +74,11 @@ export const projectList = [
   },
   {
     id: 5,
-    name: "Mobile Banking App",
+    title: "Mobile Banking App",
     code: "PROJ-05",
     pmName: "PM-02",
     status: "Completed",
-    timeline: "01/01/2025 - 01/01/2026",
+    timeline: "01-01-2025 - 01-01-2026",
     members: [{ id: 2, name: "Dat", avatar: "https://i.pravatar.cc/150?u=2" }],
     stats: [
       { label: "Progress", current: 100, total: 100 },
@@ -88,11 +88,11 @@ export const projectList = [
   },
   {
     id: 6,
-    name: "Internal HR Portal",
+    title: "Internal HR Portal",
     code: "PROJ-06",
     pmName: "PM-04",
     status: "Active",
-    timeline: "01/03/2026 - 01/03/2027",
+    timeline: "01-03-2026 - 01-03-2027",
     members: [
       { id: 11, name: "Yen", avatar: "https://i.pravatar.cc/150?u=11" },
       { id: 12, name: "Long", avatar: "https://i.pravatar.cc/150?u=12" },
@@ -105,10 +105,10 @@ export const projectList = [
   },
   {
     code: "PROJ-07",
-    name: "Inventory Management System",
+    title: "Inventory Management System",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/07/2025 - 30/07/2026",
+    timeline: "01-07-2025 - 30-07-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -122,10 +122,10 @@ export const projectList = [
   },
   {
     code: "PROJ-08",
-    name: "Video Streaming Platform",
+    title: "Video Streaming Platform",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/08/2025 - 30/08/2026",
+    timeline: "01-08-2025 - 30-08-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -139,10 +139,10 @@ export const projectList = [
   },
   {
     code: "PROJ-09",
-    name: "Healthcare Portal",
+    title: "Healthcare Portal",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/09/2025 - 30/09/2026",
+    timeline: "01-09-2025 - 30-09-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -156,10 +156,10 @@ export const projectList = [
   },
   {
     code: "PROJ-10",
-    name: "Learning Management System",
+    title: "Learning Management System",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/10/2025 - 30/10/2026",
+    timeline: "01-10-2025 - 30-10-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -173,10 +173,10 @@ export const projectList = [
   },
   {
     code: "PROJ-11",
-    name: "Real Estate Marketplace",
+    title: "Real Estate Marketplace",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/11/2025 - 30/11/2026",
+    timeline: "01-11-2025 - 30-11-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -190,10 +190,10 @@ export const projectList = [
   },
   {
     code: "PROJ-12",
-    name: "IoT Sensor Network",
+    title: "IoT Sensor Network",
     pmName: "PM",
-    status: "Pending",
-    timeline: "01/12/2025 - 30/12/2026",
+    status: "Active",
+    timeline: "01-12-2025 - 30-12-2026",
     members: Array.from({ length: 3 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -207,10 +207,10 @@ export const projectList = [
   },
   {
     code: "PROJ-13",
-    name: "Restaurant Ordering System",
+    title: "Restaurant Ordering System",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/01/2025 - 30/01/2026",
+    timeline: "01-01-2025 - 30-01-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -224,10 +224,10 @@ export const projectList = [
   },
   {
     code: "PROJ-14",
-    name: "Blockchain Payment Gateway",
+    title: "Blockchain Payment Gateway",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/02/2025 - 30/02/2026",
+    timeline: "01-02-2025 - 30-02-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -241,10 +241,10 @@ export const projectList = [
   },
   {
     code: "PROJ-15",
-    name: "HR Management Platform",
+    title: "HR Management Platform",
     pmName: "PM",
-    status: "Pending",
-    timeline: "01/03/2025 - 30/03/2026",
+    status: "Active",
+    timeline: "01-03-2025 - 30-03-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -258,10 +258,10 @@ export const projectList = [
   },
   {
     code: "PROJ-16",
-    name: "Travel Booking Engine",
+    title: "Travel Booking Engine",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/04/2025 - 30/04/2026",
+    timeline: "01-04-2025 - 30-04-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -275,10 +275,10 @@ export const projectList = [
   },
   {
     code: "PROJ-17",
-    name: "Smart Home Automation",
+    title: "Smart Home Automation",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/05/2025 - 30/05/2026",
+    timeline: "01-05-2025 - 30-05-2026",
     members: Array.from({ length: 3 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -292,10 +292,10 @@ export const projectList = [
   },
   {
     code: "PROJ-18",
-    name: "Fitness Tracking App",
+    title: "Fitness Tracking App",
     pmName: "PM",
-    status: "Pending",
-    timeline: "01/06/2025 - 30/06/2026",
+    status: "Completed",
+    timeline: "01-06-2025 - 30-06-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -309,10 +309,10 @@ export const projectList = [
   },
   {
     code: "PROJ-19",
-    name: "Supply Chain Optimizer",
+    title: "Supply Chain Optimizer",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/07/2025 - 30/07/2026",
+    timeline: "01-07-2025 - 30-07-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -326,10 +326,10 @@ export const projectList = [
   },
   {
     code: "PROJ-20",
-    name: "Content Management CMS",
+    title: "Content Management CMS",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/08/2025 - 30/08/2026",
+    timeline: "01-08-2025 - 30-08-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -343,10 +343,10 @@ export const projectList = [
   },
   {
     code: "PROJ-21",
-    name: "Virtual Event Platform",
+    title: "Virtual Event Platform",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/09/2025 - 30/09/2026",
+    timeline: "01-09-2025 - 30-09-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -360,10 +360,10 @@ export const projectList = [
   },
   {
     code: "PROJ-22",
-    name: "Cybersecurity Monitoring",
+    title: "Cybersecurity Monitoring",
     pmName: "PM",
-    status: "Pending",
-    timeline: "01/10/2025 - 30/10/2026",
+    status: "Active",
+    timeline: "01-10-2025 - 30-10-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -377,10 +377,10 @@ export const projectList = [
   },
   {
     code: "PROJ-23",
-    name: "Marketing Automation Suite",
+    title: "Marketing Automation Suite",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/11/2025 - 30/11/2026",
+    timeline: "01-11-2025 - 30-11-2026",
     members: Array.from({ length: 3 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -394,10 +394,10 @@ export const projectList = [
   },
   {
     code: "PROJ-24",
-    name: "Fleet Management System",
+    title: "Fleet Management System",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/12/2025 - 30/12/2026",
+    timeline: "01-12-2025 - 30-12-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -411,10 +411,10 @@ export const projectList = [
   },
   {
     code: "PROJ-25",
-    name: "Customer Loyalty Program",
+    title: "Customer Loyalty Program",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/01/2025 - 30/01/2026",
+    timeline: "01-01-2025 - 30-01-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -428,10 +428,10 @@ export const projectList = [
   },
   {
     code: "PROJ-26",
-    name: "Document Collaboration Tool",
+    title: "Document Collaboration Tool",
     pmName: "PM",
-    status: "Pending",
-    timeline: "01/02/2025 - 30/02/2026",
+    status: "Active",
+    timeline: "01-02-2025 - 30-02-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -445,10 +445,10 @@ export const projectList = [
   },
   {
     code: "PROJ-27",
-    name: "Voice Assistant Integration",
+    title: "Voice Assistant Integration",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/03/2025 - 30/03/2026",
+    timeline: "01-03-2025 - 30-03-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -462,10 +462,10 @@ export const projectList = [
   },
   {
     code: "PROJ-28",
-    name: "Energy Monitoring Dashboard",
+    title: "Energy Monitoring Dashboard",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/04/2025 - 30/04/2026",
+    timeline: "01-04-2025 - 30-04-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -479,10 +479,10 @@ export const projectList = [
   },
   {
     code: "PROJ-29",
-    name: "Recipe Sharing Network",
+    title: "Recipe Sharing Network",
     pmName: "PM",
-    status: "Pending",
-    timeline: "01/05/2025 - 30/05/2026",
+    status: "Active",
+    timeline: "01-05-2025 - 30-05-2026",
     members: Array.from({ length: 3 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -496,10 +496,10 @@ export const projectList = [
   },
   {
     code: "PROJ-30",
-    name: "Warehouse Robotics Control",
+    title: "Warehouse Robotics Control",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/06/2025 - 30/06/2026",
+    timeline: "01-06-2025 - 30-06-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -513,10 +513,10 @@ export const projectList = [
   },
   {
     code: "PROJ-31",
-    name: "Online Auction Platform",
+    title: "Online Auction Platform",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/07/2025 - 30/07/2026",
+    timeline: "01-07-2025 - 30-07-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -530,10 +530,10 @@ export const projectList = [
   },
   {
     code: "PROJ-32",
-    name: "Telemedicine Consultation",
+    title: "Telemedicine Consultation",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/08/2025 - 30/08/2026",
+    timeline: "01-08-2025 - 30-08-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -547,10 +547,10 @@ export const projectList = [
   },
   {
     code: "PROJ-33",
-    name: "Music Streaming Service",
+    title: "Music Streaming Service",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/09/2025 - 30/09/2026",
+    timeline: "01-09-2025 - 30-09-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -564,10 +564,10 @@ export const projectList = [
   },
   {
     code: "PROJ-34",
-    name: "Insurance Claims Portal",
+    title: "Insurance Claims Portal",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/10/2025 - 30/10/2026",
+    timeline: "01-10-2025 - 30-10-2026",
     members: Array.from({ length: 3 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -581,10 +581,10 @@ export const projectList = [
   },
   {
     code: "PROJ-35",
-    name: "Job Recruitment Platform",
+    title: "Job Recruitment Platform",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/11/2025 - 30/11/2026",
+    timeline: "01-11-2025 - 30-11-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -598,10 +598,10 @@ export const projectList = [
   },
   {
     code: "PROJ-36",
-    name: "Photo Editing Suite",
+    title: "Photo Editing Suite",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/12/2025 - 30/12/2026",
+    timeline: "01-12-2025 - 30-12-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -615,10 +615,10 @@ export const projectList = [
   },
   {
     code: "PROJ-37",
-    name: "Weather Forecasting API",
+    title: "Weather Forecasting API",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/01/2025 - 30/01/2026",
+    timeline: "01-01-2025 - 30-01-2026",
     members: Array.from({ length: 6 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -632,10 +632,10 @@ export const projectList = [
   },
   {
     code: "PROJ-38",
-    name: "Digital Wallet Solution",
+    title: "Digital Wallet Solution",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/02/2025 - 30/02/2026",
+    timeline: "01-02-2025 - 30-02-2026",
     members: Array.from({ length: 4 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -649,10 +649,10 @@ export const projectList = [
   },
   {
     code: "PROJ-39",
-    name: "Sports League Manager",
+    title: "Sports League Manager",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/03/2025 - 30/03/2026",
+    timeline: "01-03-2025 - 30-03-2026",
     members: Array.from({ length: 5 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,
@@ -666,10 +666,10 @@ export const projectList = [
   },
   {
     code: "PROJ-40",
-    name: "Email Marketing Tool",
+    title: "Email Marketing Tool",
     pmName: "PM",
     status: "Pending",
-    timeline: "01/04/2025 - 30/04/2026",
+    timeline: "01-04-2025 - 30-04-2026",
     members: Array.from({ length: 3 }, (_, memberIndex) => ({
       id: memberIndex + 1,
       name: `Member ${memberIndex + 1}`,

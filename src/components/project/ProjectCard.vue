@@ -12,7 +12,7 @@ defineProps({
     <!-- Header -->
     <div class="card-header">
       <div class="title-group">
-        <h3>{{ project.name }}</h3>
+        <h3>{{ project.title }}</h3>
         <span class="project-id">{{ project.code }}</span>
       </div>
       <button class="btn-more">⋮</button>

@@ -50,7 +50,7 @@ const handleLogin = () => {
           Remember me
         </label>
       </div>
-      <BaseButton text="Login" type="submit" className="btn-login" />
+      <BaseButton text="Login" type="submit" variant="auth" />
       <div class="auth-footer">
         <router-link to="/auth/forgot-password" class="auth-link"> Forgot your password </router-link>
       </div>
@@ -98,7 +98,5 @@ const handleLogin = () => {
   color: #FF383C;
   text-decoration: underline;
 }
-.btn-login {
-  margin-top: 1.5rem;
-}
+
 </style>
