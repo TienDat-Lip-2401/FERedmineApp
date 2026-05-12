@@ -5,6 +5,7 @@ import BaseInput from "@/components/common/BaseInput.vue";
 import AddMemberModal from "@/components/project/AddMemberModal.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
+import trashIcon from "@/assets/icons/trash.svg";
 const projectStore = useProjectStore();
 const isModalOpen = ref(false);
 // Xử lý xác nhận xóa thành viên
@@ -123,7 +124,9 @@ const members = ref([
               <td class="font-bold">{{ m.name }}</td>
               <td>{{ m.role }}</td>
               <td class="text-center">
-                <button @click="triggerDelete(index)" class="btn-delete">🗑️</button>
+                <button class="btn-delete" @click="triggerDelete(index)">
+                  <img :src="trashIcon" alt="Delete" />
+                </button>
               </td>
             </tr>
           </tbody>
@@ -151,7 +154,7 @@ const members = ref([
         </div>
       </div>
       <div class="form-actions">
-        <button class="btn-cancel" @click="router.back()">Cancel</button>
+        <button class="btn-cancel" @click="router.push('/projects')">Cancel</button>
         <button class="btn-save" @click="handleSave">Save</button>
       </div>
     </div>
@@ -162,7 +165,7 @@ const members = ref([
 
 <style scoped>
 .create-project-container {
-  max-width: 1000px;
+  /* max-width: 1000px; */
   margin: 0 auto;
   padding: 20px;
 }
@@ -367,5 +370,25 @@ const members = ref([
   border: none;
   font-weight: 600;
   cursor: pointer;
+}
+.btn-delete {
+  width: 14px;
+  height: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.25rem;
+  transition: transform 0.2s;
+  display: inline-block;
+  .img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.btn-delete:hover {
+  transform: scale(1.2);
 }
 </style>

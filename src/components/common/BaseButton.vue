@@ -35,7 +35,7 @@ defineProps({
 
 /* Biến thể màu đỏ (Danger) */
 .btn-danger {
-  background-color: #ff3b3f;
+  background-color: #FF383C;
   color: white;
 }
 

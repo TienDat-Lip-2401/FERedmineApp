@@ -8,11 +8,12 @@ import DefaultLayout from "@/layouts/DefaultLayout/DefaultLayout.vue";
 import TasksPage from "@/pages/dashboard/TasksPage.vue";
 import Performance from "@/pages/dashboard/PerformancePage.vue";
 import Roles from "@/pages/dashboard/RolesPage.vue";
-import UsersPage from "@/pages/dashboard/UsersPage.vue";
+import UsersPage from "@/pages/user/UsersPage.vue";
 import WorkLogsPage from "@/pages/dashboard/WorkLogsPage.vue";
 import PositionsPage from "@/pages/dashboard/PositionsPage.vue";
 import CreateProjectPage from "@/pages/projects/CreateProjectPage.vue";
 import ProjectsPage from "@/pages/projects/ProjectsPage.vue";
+import CreateUserPage from "@/pages/user/CreateUserPage.vue";
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -54,6 +55,11 @@ const router = createRouter({
           path: "users",
           name: "Users",
           component: UsersPage,
+        },
+        {
+          path: "users/create",
+          name: "CreateUser",
+          component: CreateUserPage,
         },
         {
           path: "work-logs",

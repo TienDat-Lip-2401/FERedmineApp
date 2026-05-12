@@ -6,23 +6,16 @@ import IconPerformance from "@/assets/icons/Perfomance.svg";
 import IconUsers from "@/assets/icons/Setting.svg";
 import IconPositions from "@/assets/icons/Setting.svg";
 import IconRoles from "@/assets/icons/Setting.svg";
-import { ref } from "vue";
 const menuItems = [
-  { name: "Projects", icon: IconProject, active: true, path: "/projects" },
-  { name: "Tasks", icon: IconTasks, active: false, path: "/tasks" },
-  { name: "Work Logs", icon: IconWorkLogs, active: false, path: "/work-logs" },
-  { name: "Performance", icon: IconPerformance, active: false, path: "/performance" },
-  { name: "Users", icon: IconUsers, active: false, path: "/users" },
-  { name: "Positions", icon: IconPositions, active: false, path: "/positions" },
-  { name: "Roles", icon: IconRoles, active: false, path: "/roles" },
+  { name: "Projects", icon: IconProject, path: "/projects" },
+  { name: "Tasks", icon: IconTasks, path: "/tasks" },
+  { name: "Work Logs", icon: IconWorkLogs, path: "/work-logs" },
+  { name: "Performance", icon: IconPerformance, path: "/performance" },
+  { name: "Users", icon: IconUsers, path: "/users" },
+  { name: "Positions", icon: IconPositions, path: "/positions" },
+  { name: "Roles", icon: IconRoles, path: "/roles" },
 ];
-const activeName = ref(menuItems[0].name);
-const handleActiveItem = (name) => {
-  activeName.value = name;
-  // menuItems.forEach((item) => {
-  //   item.active = item.name === name;
-  // });
-};
+
 </script>
 
 <template>
@@ -32,9 +25,10 @@ const handleActiveItem = (name) => {
         class=""
         v-for="item in menuItems"
         :key="item.name"
-        :class="['nav-item', { active: activeName === item.name }]"
+        :class="['nav-item']"
         :to="item.path"
-        @click="handleActiveItem(item.name)"
+        
+        active-class="active"
       >
         <span class="nav-icon">
           <img :src="item.icon" alt="Icon" class="icon" />

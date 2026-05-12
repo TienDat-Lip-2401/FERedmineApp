@@ -1,22 +1,26 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useUserStore } from "@/stores/userStore.js";
 
+const userStore = useUserStore();
+// eslint-disable-next-line no-unused-vars
 const props = defineProps({
   isOpen: Boolean,
 });
 
 const emit = defineEmits(["close", "add"]);
-
+const removeVietnameseTones = (str) => {
+  if (!str) return "";
+  return str
+    .normalize("NFD") // Tách các dấu ra khỏi chữ cái gốc
+    .replace(/[\u0300-\u036f]/g, "") // Xóa các dấu vừa tách
+    .replace(/đ/g, "d") // Xử lý riêng chữ đ
+    .replace(/Đ/g, "D")
+    .toLowerCase();
+};
 const searchQuery = ref("");
-
-const availableUsers = ref([
-  { id: 1, name: "Nguyễn Văn A", email: "anv@gmail.com", role: "Backend Developer" },
-  { id: 2, name: "Nguyễn Văn B", email: "bv@gmail.com", role: "Backend Developer" },
-  { id: 3, name: "Nguyễn Văn C", email: "cnv@gmail.com", role: "FrontEnd Developer" },
-  { id: 4, name: "Nguyễn Văn D", email: "danv@gmail.com", role: "FrontEnd Developer" },
-  { id: 5, name: "Nguyễn Văn E", email: "eenv@gmail.com", role: "Project Manager" },
-]);
-
+const displayedUsers = ref([...userStore.users]); 
+const availableUsers = computed(() => userStore.users);
 // Lưu trữ những user được check
 const selectedUsers = ref([]);
 
@@ -40,6 +44,17 @@ const handleClose = () => {
   selectedUsers.value = []; // Reset khi đóng
   emit("close");
 };
+const handleSearch = () => {
+  const query = removeVietnameseTones(searchQuery.value.trim().toLowerCase());
+  if (query === "") {
+    displayedUsers.value = [...availableUsers.value];
+  } else {
+    displayedUsers.value = availableUsers.value.filter(user =>
+      removeVietnameseTones(user.name).includes(query) ||
+      user.email.trim().toLowerCase().includes(query)
+    );
+  }
+};
 </script>
 
 <template>
@@ -54,7 +69,7 @@ const handleClose = () => {
           placeholder="Search user..." 
           class="search-input"
         />
-        <button class="btn-search">Search</button>
+        <button class="btn-search" @click="handleSearch">Search</button>
       </div>
 
       <div class="table-wrapper">
@@ -67,7 +82,7 @@ const handleClose = () => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in availableUsers" :key="user.id">
+            <tr v-for="user in displayedUsers" :key="user.id">
               <td>
                 <input 
                   type="checkbox" 
