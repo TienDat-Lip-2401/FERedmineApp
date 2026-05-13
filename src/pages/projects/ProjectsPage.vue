@@ -7,10 +7,15 @@ import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
 const projectStore = useProjectStore();
 const currentPage = ref(1);
+// --- Tìm kiếm ---
 const searchQuery = ref("");
+const debouncedSearchQuery = ref("");
+let debounceTimeout = null;
+// --- Phân trang ---
 const itemsPerPage = ref(6);
 const projectIdToDelete = ref(null);
 const isConfirmOpen = ref(false);
+
 const openDeleteModal = (id) => {
   console.log("Project ID to delete:", id, typeof id);
   projectIdToDelete.value = id;
@@ -30,8 +35,15 @@ const gridClass = computed(() => {
   console.log(itemsPerPage.value);
   return `grid-items-${itemsPerPage.value}`;
 });
-watch([searchQuery, itemsPerPage], () => {
-  currentPage.value = 1;
+// watch([searchQuery, itemsPerPage], () => {
+//   currentPage.value = 1;
+// });
+watch(searchQuery, (newQuery) => {
+  if (debounceTimeout) clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    currentPage.value = 1;
+    debouncedSearchQuery.value = newQuery;
+  }, 300);
 });
 const paginatedProjects = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -40,15 +52,17 @@ const paginatedProjects = computed(() => {
 });
 const filteredProjects = computed(() => {
   const list = projectStore.projects || [];
-  const query = (searchQuery.value || "").toLowerCase();
+  const query = (debouncedSearchQuery.value || "").toLowerCase().trim();
   return list.filter((item) => {
     const projectTitle = (item.title || "").toLowerCase();
     return projectTitle.includes(query);
   });
 });
 // 4. Tính tổng số trang (Dùng Math.ceil cho ngắn gọn thay vì if/else)
-const totalItems = computed(() => projectStore.projects.length);
-const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
+const totalItems = computed(() => filteredProjects.value.length);
+const totalPages = computed(() => {
+  return totalItems.value >0 ? Math.ceil(totalItems.value / itemsPerPage.value) : 1;
+});
 </script>
 
 <template>

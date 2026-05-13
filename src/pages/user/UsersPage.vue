@@ -10,12 +10,20 @@ import trashIcon from "@/assets/icons/trash.svg";
 import editIcon from "@/assets/icons/edit.svg";
 const router = useRouter();
 const userStore = useUserStore();
-// --- QUẢN LÝ TRẠNG THÁI ---
+// --- QUẢN LÝ TÌM KIẾM ---
 const searchQuery = ref("");
+const debouncedSearchQuery = ref(""); 
+let debounceTimeout = null;
 const searchField = ref("");
 const statusFilter = ref("");
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
+watch(searchQuery, (newQuery) => {
+  if (debounceTimeout) clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    debouncedSearchQuery.value = newQuery;
+  }, 300);
+});
 // --- XỬ LÝ XÓA ---
 const isConfirmOpen = ref(false);
 const userIdToDelete = ref(null);
@@ -34,11 +42,11 @@ watch(searchField, () => {
   searchQuery.value = "";
 });
 // Khi searchQuery, statusFilter hoặc searchField thay đổi thì reset về trang 1
-watch([searchQuery, statusFilter, searchField], () => {
+watch([debouncedSearchQuery, statusFilter, searchField], () => {
   currentPage.value = 1;
 });
 const filteredUsers = computed(() => {
-  const key = removeVietnameseTones(searchQuery.value);
+  const key = removeVietnameseTones(debouncedSearchQuery.value);
 
   return userStore.users.filter((user) => {
     // Lọc theo trường đã chọn (Name/Email/Code)
@@ -54,20 +62,22 @@ const filteredUsers = computed(() => {
   });
 });
 const totalItems = computed(() => filteredUsers.value.length);
-const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
+const totalPages = computed(() => {
+  return totalItems.value > 0 ? Math.ceil(totalItems.value / itemsPerPage.value) : 1;
+});
 const paginatedUsers = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
   return filteredUsers.value.slice(start, end);
 });
 const handleCreateUser = () => {
-  router.push("/users/create"); // Hoặc mở Modal tạo tùy Đạt
+  router.push("/users/create");
 };
 const triggerDelete = (id) => {
   userIdToDelete.value = id;
   isConfirmOpen.value = true;
 };
-
+// Xác nhận xóa
 const confirmDelete = () => {
   userStore.deleteUser(userIdToDelete.value);
   isConfirmOpen.value = false;
