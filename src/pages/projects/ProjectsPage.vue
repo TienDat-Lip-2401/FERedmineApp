@@ -3,11 +3,29 @@ import { ref, computed, watch } from "vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import BasePagination from "@/components/common/BasePagination.vue";
 import ProjectCard from "@/components/project/ProjectCard.vue";
+import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
 const projectStore = useProjectStore();
 const currentPage = ref(1);
 const searchQuery = ref("");
 const itemsPerPage = ref(6);
+const projectIdToDelete = ref(null);
+const isConfirmOpen = ref(false);
+const openDeleteModal = (id) => {
+  console.log("Project ID to delete:", id, typeof id);
+  projectIdToDelete.value = id;
+  isConfirmOpen.value = true;
+  console.log(isConfirmOpen.value);
+};
+const handleConfirmDelete = () => {
+  console.log("Confirmed deletion for project ID:", projectIdToDelete.value, typeof projectIdToDelete.value);
+  if (projectIdToDelete.value) {
+    console.log("Deleting project with ID:", projectIdToDelete.value, typeof projectIdToDelete.value);
+    projectStore.deleteProject(projectIdToDelete.value);
+    isConfirmOpen.value = false;
+    projectIdToDelete.value = null;
+  }
+};
 const gridClass = computed(() => {
   console.log(itemsPerPage.value);
   return `grid-items-${itemsPerPage.value}`;
@@ -44,7 +62,7 @@ const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.valu
     </div>
     <!-- Project List -->
     <div :class="['projects-grid', gridClass]">
-      <ProjectCard v-for="item in paginatedProjects" :key="item.id" :project="item" />
+      <ProjectCard v-for="item in paginatedProjects" :key="item.id" :project="item" @delete="openDeleteModal"/>
     </div>
     <!-- Pagination -->
     <BasePagination
@@ -52,6 +70,15 @@ const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.valu
       :pages="totalPages"
       v-model:current="currentPage"
       v-model:pageSize="itemsPerPage"
+    />
+    <!-- Confirm Modal -->
+    <ConfirmModal
+      v-if="isConfirmOpen"
+      :isOpen="isConfirmOpen"
+      title="Confirm Deletion"
+      message="Are you sure you want to delete this project?"
+      @confirm="handleConfirmDelete"
+      @close="isConfirmOpen = false"
     />
   </div>
 </template>

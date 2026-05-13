@@ -1,10 +1,24 @@
 <script setup>
-defineProps({
+// import { ref } from "vue";
+import MenuIcon from "@/assets/icons/Menu.svg";
+import BaseMenu from "@/components/common/BaseMenu.vue";
+
+const props = defineProps({
   project: {
     type: Object,
     required: true,
   },
 });
+const emit = defineEmits(["edit", "delete"]);
+const handleEdit = () => {
+  console.log("Edit project with ID:", props.project.id);
+  emit("edit", props.project.id);
+};
+
+const handleDelete = () => {
+  
+  emit("delete", props.project.id);
+};
 </script>
 
 <template>
@@ -15,7 +29,17 @@ defineProps({
         <h3>{{ project.title }}</h3>
         <span class="project-id">{{ project.code }}</span>
       </div>
-      <button class="btn-more">⋮</button>
+
+      <BaseMenu>
+        <template #trigger>
+          <button class="btn-more">
+            <img :src="MenuIcon" alt="Menu" />
+          </button>
+        </template>
+
+        <div class="menu-item edit" @click="handleEdit">Edit</div>
+        <div class="menu-item delete" @click="handleDelete">Delete</div>
+      </BaseMenu>
     </div>
     <!-- Body -->
     <div class="card-body">
@@ -60,7 +84,9 @@ defineProps({
     <!-- Footer -->
     <div class="card-footer">
       <span class="status-badge" :class="project.status">{{ project.status }}</span>
-      <span class="timeline">Timeline: <span class="time">{{ project.timeline }}</span></span>
+      <span class="timeline"
+        >Timeline: <span class="time">{{ project.timeline }}</span></span
+      >
     </div>
   </div>
 </template>
@@ -99,16 +125,18 @@ defineProps({
   }
 }
 .btn-more {
+  width: 24px;
+  height: 24px;
   background: none;
   border: none;
   border-radius: 50%;
-  font-size: 24px;
-  font-weight: 700;
-  width: 32px;
-  height: 32px;
-  color: var(--text-muted);
   cursor: pointer;
   color: #000000;
+  .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 .btn-more:hover {
   background-color: #e5e5e5;

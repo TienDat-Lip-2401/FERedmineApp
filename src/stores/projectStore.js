@@ -8,6 +8,8 @@ export const useProjectStore = defineStore("project", () => {
   const addProject = (newProject) => {
     projects.value.unshift(newProject); // Thêm vào đầu danh sách
   };
-
-  return { projects, addProject };
+  const deleteProject = (projectId) => {
+    projects.value = projects.value.filter((project) => project.id !== projectId);
+  }
+  return { projects, addProject , deleteProject};
 });
