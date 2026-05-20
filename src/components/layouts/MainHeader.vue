@@ -1,5 +1,17 @@
 <script setup>
+import { useRouter } from "vue-router";
 import nontificationIcon from "@/assets/icons/notification.svg";
+import { useAuthStore } from "@/stores/authStore";
+import BaseMenu from "../common/BaseMenu.vue";
+const authStore = useAuthStore();
+const router = useRouter();
+const handleLogout = () => {
+  authStore.logout();
+  router.push({ name: "Login" });
+};
+const goToProfile = () => {
+  router.push("/users/profile");
+};
 </script>
 
 <template>
@@ -14,13 +26,28 @@ import nontificationIcon from "@/assets/icons/notification.svg";
         </i>
         <span class="badge">10</span>
       </div>
-      <div class="user-profile">
-        <div class="user-info">
-          <p class="user-name">Nguyễn Tiến Đạt</p>
-          <p class="user-role">PHP Developer</p>
+      <BaseMenu>
+        <template #trigger>
+          <div class="user-profile">
+            <div class="user-info">
+              <p class="user-name">{{ authStore.user?.name || "Chưa đăng nhập" }}</p>
+              <p class="user-role">
+                {{
+                  authStore.user?.positions?.includes("Project Manager")
+                    ? "Project Manager"
+                    : authStore.user?.positions?.[0]
+                }}
+              </p>
+            </div>
+            <img src="@/assets/images/avatar.png" alt="Avatar" class="user-avatar" />
+          </div>
+        </template>
+        <div class="menu-item" @click="goToProfile"><i class="icon-edit"></i> Sửa thông tin</div>
+        <div class="menu-item" @click="goToProfile"><i class="icon-edit"></i> Đổi mật khẩu</div>
+        <div class="menu-item delete" @click="handleLogout">
+          <i class="icon-logout"></i> Đăng xuất
         </div>
-        <img src="@/assets/images/avatar.png" alt="Avatar" class="user-avatar" />
-      </div>
+      </BaseMenu>
     </div>
   </header>
 </template>
@@ -103,5 +130,9 @@ import nontificationIcon from "@/assets/icons/notification.svg";
     user-select: none;
     -webkit-user-drag: none;
   }
+}
+:deep(.menu-content) {
+  top: 80%;
+  right: -1px;
 }
 </style>

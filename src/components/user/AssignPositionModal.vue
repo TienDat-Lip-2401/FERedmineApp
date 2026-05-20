@@ -1,31 +1,40 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from "vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
-
+import { usePositionStore } from "@/stores/positionStore";
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
   isOpen: Boolean,
+  userId: [Number, String],
 });
-
-const emit = defineEmits(['close', 'add']);
-
+const emit = defineEmits(["close", "add"]);
+const positionStore = usePositionStore();
 // Data mẫu (Sau này Đạt có thể lấy từ Store hoặc API)
-const allPositions = ref([
-  { id: 101, name: 'Project Manager' },
-  { id: 102, name: 'Backend Developer' },
-  { id: 103, name: 'Technical Leader' },
-  { id: 104, name: 'Frontend Developer' },
-  { id: 105, name: 'AI Engineer' },
-]);
-
 const searchQuery = ref("");
-const selectedIds = ref([]); 
+const selectedIds = ref([]);
+const loadAvailablePositions = async () => {
+  if (props.userId) {
+    await positionStore.fetchAvailablePositions(props.userId);
+  }
+};
+watch(
+  () => props.isOpen,
+  (newVal) => {
+    if (newVal) {
+      loadAvailablePositions();
+      selectedIds.value = [];
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 
 // Logic tìm kiếm real-time
 const filteredPositions = computed(() => {
   const key = searchQuery.value.toLowerCase().trim();
-  return allPositions.value.filter(p => p.name.toLowerCase().includes(key));
+  return positionStore.availablePositions.filter((p) => p.name.toLowerCase().includes(key));
 });
 
 const toggleSelect = (id) => {
@@ -37,11 +46,27 @@ const toggleSelect = (id) => {
   }
 };
 
-const handleApply = () => {
-  // Lọc ra các object position đầy đủ dựa trên ID đã chọn
-  const selectedList = allPositions.value.filter(p => selectedIds.value.includes(p.id));
-  emit('add', selectedList);
-  selectedIds.value = []; // Reset sau khi add
+const handleApply = async () => {
+  if (selectedIds.value.length === 0) {
+    alert("Please select at least one position.");
+    return;
+  }
+  try {
+    const result = await positionStore.assignPositions(props.userId, selectedIds.value);
+    if (result.statusCode === 200 || result.success) {
+      // Báo cho cha biết đã thêm thành công để cập nhật UI
+      emit("add");
+      emit("close");
+    }
+    // eslint-disable-next-line no-unused-vars
+  } catch (error) {
+    console.error("Lỗi chi tiết khiến nó nhảy vào catch:", error);
+
+    // Hiển thị lỗi từ Backend (nếu có) thay vì câu fix cứng
+    const errorMsg =
+      error.response?.data?.message || error.message || "Failed to assign positions.";
+    alert("Lỗi: " + errorMsg);
+  }
 };
 </script>
 
@@ -51,9 +76,9 @@ const handleApply = () => {
       <h3 class="modal-title">Assign Position</h3>
 
       <div class="search-box">
-        <BaseInput 
-          v-model="searchQuery" 
-          placeholder="Search position name..." 
+        <BaseInput
+          v-model="searchQuery"
+          placeholder="Search position name..."
           no-margin
           class="flex-1"
         />
@@ -71,8 +96,8 @@ const handleApply = () => {
           <tbody>
             <tr v-for="pos in filteredPositions" :key="pos.id">
               <td>
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   :checked="selectedIds.includes(pos.id)"
                   @change="toggleSelect(pos.id)"
                   class="custom-checkbox"
@@ -95,9 +120,11 @@ const handleApply = () => {
 <style scoped>
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.4);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -125,7 +152,9 @@ const handleApply = () => {
   margin-bottom: 2rem;
 }
 
-.flex-1 { flex: 1; }
+.flex-1 {
+  flex: 1;
+}
 
 .table-wrapper {
   max-height: 300px;

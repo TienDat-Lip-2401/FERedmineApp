@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import BaseButton from "@/components/common/BaseButton.vue";
@@ -10,9 +10,15 @@ import trashIcon from "@/assets/icons/trash.svg";
 import editIcon from "@/assets/icons/edit.svg";
 const router = useRouter();
 const userStore = useUserStore();
+onMounted(async () => {
+  if (userStore.users.length === 0) {
+    await userStore.fetchUsers();
+    console.log("Fetched users:", userStore.users);
+  }
+});
 // --- QUẢN LÝ TÌM KIẾM ---
 const searchQuery = ref("");
-const debouncedSearchQuery = ref(""); 
+const debouncedSearchQuery = ref("");
 let debounceTimeout = null;
 const searchField = ref("");
 const statusFilter = ref("");
@@ -78,8 +84,16 @@ const triggerDelete = (id) => {
   isConfirmOpen.value = true;
 };
 // Xác nhận xóa
-const confirmDelete = () => {
-  userStore.deleteUser(userIdToDelete.value);
+const confirmDelete = async () => {
+  if (!userIdToDelete.value) return;
+  const result = await userStore.deleteUser(userIdToDelete.value);
+  if (result.success) {
+    if (paginatedUsers.value.length === 0 && currentPage.value > 1) {
+      currentPage.value--;
+    }
+  } else {
+    alert(result.message);
+  }
   isConfirmOpen.value = false;
   userIdToDelete.value = null;
 };
@@ -137,11 +151,11 @@ const confirmDelete = () => {
             <td>{{ user.code }}</td>
             <td class="user-name">{{ user.name }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.phone || "N/A" }}</td>
+            <td>{{ user.phoneNumber || "N/A" }}</td>
             <td>{{ user.joinDate }}</td>
             <td>
-              <span :class="['status-tag', user.status.toLowerCase()]">
-                {{ user.status }}
+              <span :class="['status-tag', user.status ? 'active' : 'inactive']">
+                {{ user.status ? "Active" : "Inactive" }}
               </span>
             </td>
             <td class="action-btns">

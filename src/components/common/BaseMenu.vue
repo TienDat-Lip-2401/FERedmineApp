@@ -43,7 +43,7 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
 
 .menu-content {
   width: 120px;
-  height: 78px;
+  height: auto;
   position: absolute;
   top: 60%;
   right: 10px;
@@ -53,8 +53,6 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 1px solid #78787833;
   z-index: 100;
-  width: 120px;
-  height: auto;
   margin-top: 10px;
   overflow: hidden;
 }

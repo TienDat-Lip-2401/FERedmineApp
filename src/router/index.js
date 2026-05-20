@@ -14,12 +14,15 @@ import PositionsPage from "@/pages/dashboard/PositionsPage.vue";
 import CreateProjectPage from "@/pages/projects/CreateProjectPage.vue";
 import ProjectsPage from "@/pages/projects/ProjectsPage.vue";
 import CreateUserPage from "@/pages/user/CreateUserPage.vue";
+import ProfilePage from "@/pages/user/ProfilePage.vue";
+import RegisterPage from "@/pages/auth/RegisterPage.vue";
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
       component: DefaultLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: "",
@@ -62,6 +65,11 @@ const router = createRouter({
           component: CreateUserPage,
         },
         {
+          path: "users/profile",
+          name: "Profile",
+          component: ProfilePage,
+        },
+        {
           path: "work-logs",
           name: "WorkLogs",
           component: WorkLogsPage,
@@ -70,7 +78,7 @@ const router = createRouter({
           path: "positions",
           name: "Positions",
           component: PositionsPage,
-        }
+        },
       ],
     },
     {
@@ -81,6 +89,7 @@ const router = createRouter({
           path: "login",
           name: "Login",
           component: Login,
+          meta: { guestOnly: true },
         },
         {
           path: "forgot-password",
@@ -92,9 +101,37 @@ const router = createRouter({
           name: "ResetPassword",
           component: ResetPassword,
         },
+        {
+          path: "register",
+          name: "Register",
+          component: RegisterPage
+        }
       ],
     },
   ],
 });
 
+router.beforeEach((to, from) => {
+  // 1. Kiểm tra trạng thái đăng nhập từ localStorage
+  const isAuthenticated = !!localStorage.getItem("refresh_token");
+
+  // 2. Kiểm tra các thuộc tính meta của Route hiện tại (bao gồm cả các Route cha)
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const isGuestOnly = to.matched.some(record => record.meta.guestOnly);
+
+  // TRƯỜNG HỢP 1: Truy cập trang yêu cầu đăng nhập mà chưa đăng nhập
+  if (requiresAuth && !isAuthenticated) {
+    // Đẩy về trang Login
+    return { name: "Login" };
+  }
+
+  // TRƯỜNG HỢP 2: Đã đăng nhập rồi nhưng cố tình vào lại trang Login/Quên mật khẩu
+  if (isGuestOnly && isAuthenticated) {
+    // Đẩy về trang chủ (Home)
+    return { name: "Home" };
+  }
+
+  // Cho phép đi tiếp bình thường
+  return true;
+});
 export default router;
