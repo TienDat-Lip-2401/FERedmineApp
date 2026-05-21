@@ -41,6 +41,20 @@ const togglePassword = () => {
   isPasswordHidden.value = !isPasswordHidden.value;
 };
 const handleLogin = async () => {
+  apiErrors.email = "";
+  apiErrors.password = "";
+  apiErrors.general = "";
+
+  if (!formData.email.trim()) {
+    apiErrors.email = "Vui lòng nhập email";
+  }
+
+  if (!formData.password.trim()) {
+    apiErrors.password = "Vui lòng nhập mật khẩu";
+  }
+  if (apiErrors.email || apiErrors.password) {
+    return;
+  }
   isLoading.value = true;
   try {
     const response = await authService.login({
@@ -54,7 +68,7 @@ const handleLogin = async () => {
       name: name,
       positions: positions,
     });
-    sessionStorage.removeItem("login_form_draft")
+    sessionStorage.removeItem("login_form_draft");
     router.push("/");
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Đăng nhập không thành công";
@@ -100,7 +114,13 @@ const handleLogin = async () => {
           Remember me
         </label>
       </div>
-      <div v-if="apiErrors.general" class="error-box">
+      <div v-if="apiErrors.email" class="error-box">
+        {{ apiErrors.email }}
+      </div>
+      <div v-else-if="apiErrors.password" class="error-box">
+        {{ apiErrors.password }}
+      </div>
+      <div v-else-if="apiErrors.general" class="error-box">
         {{ apiErrors.general }}
       </div>
       <BaseButton text="Login" type="submit" variant="auth" />
@@ -150,6 +170,8 @@ const handleLogin = async () => {
   cursor: pointer;
   font-weight: 500;
   user-select: none;
+  background: none;
+  border: none;
 }
 .auth-footer {
   margin-top: 2.5rem;

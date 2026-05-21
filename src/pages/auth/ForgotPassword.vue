@@ -2,35 +2,44 @@
 import { ref } from "vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
-
+import { useModalStore } from "@/stores/modalStore";
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const modalStore = useModalStore();
 const email = ref("");
-
+const emailError = ref("");
 const handleSend = () => {
-  if (email.value) {
-    console.log("Gửi yêu cầu reset pass cho:", email.value);
-    alert("Hệ thống đã gửi hướng dẫn lấy lại mật khẩu vào email của bạn!");
+  emailError.value = "";
+  if (!email.value) {
+    emailError.value = "Vui lòng nhập địa chỉ email.";
+    return;
   }
+  if (!emailRegex.test(email.value)) {
+    emailError.value = "Định dạng email không hợp lệ.";
+    return;
+  }
+  console.log("Gửi yêu cầu reset pass cho:", email.value);
+
+  modalStore.showModal({
+    title: "Thành công",
+    message: "Một đường dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư email của bạn!",
+    type: "success",
+  });
+  email.value = "";
 };
 </script>
 
 <template>
   <div class="auth-wrapper">
     <h1 class="auth-title">Forgot Password</h1>
-    <form @submit.prevent="handleSend">
-      <BaseInput
-        label="Email address"
-        id="email"
-        v-model="email"
-        type="email"
-        required
-      />
-
-      <BaseButton text="Send" type="submit" class="btn-auth"/>
+    <form @submit.prevent="handleSend" novalidate>
+      <BaseInput label="Email address" id="email" v-model="email" type="email" required />
+      <Transition name="slide-fade">
+        <span v-if="emailError" class="error-text">{{ emailError }}</span>
+      </Transition>
+      <BaseButton text="Send" type="submit" class="btn-auth" />
 
       <div class="auth-footer">
-        <router-link to="/auth/login" class="auth-link">
-          Back to Login
-        </router-link>
+        <router-link to="/auth/login" class="auth-link"> Back to Login </router-link>
       </div>
     </form>
   </div>
@@ -70,9 +79,36 @@ const handleSend = () => {
 .auth-link:hover {
   text-decoration: underline;
 }
-
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease-in-out;
+  max-height: 50px;
+  opacity: 1;
+  overflow: hidden;
+}
+.error-text {
+  color: #ff3b3f; /* Màu đỏ đồng bộ với theme của bạn */
+  font-size: 1.3rem;
+  display: block;
+  margin-top: -0.5rem; /* Kéo lên gần input một chút */
+  margin-bottom: 1.5rem;
+}
+/* 2. Trạng thái lúc bắt đầu xuất hiện (enter-from) và lúc kết thúc biến mất (leave-to) */
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  transform: translateY(-5px);
+}
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

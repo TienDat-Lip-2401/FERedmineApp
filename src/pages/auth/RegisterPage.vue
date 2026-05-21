@@ -21,26 +21,26 @@ const apiErrors = reactive({
 const isPasswordHidden = ref(true);
 const isConfirmPasswordHidden = ref(true);
 const isLoading = ref(false);
-//Load dữ liệu 
+//Load dữ liệu
 onMounted(() => {
   const draft = sessionStorage.getItem("register_form_draft");
-  if(draft) {
+  if (draft) {
     const parseDraft = JSON.parse(draft);
     formData.name = parseDraft.name;
     formData.email = parseDraft.email;
   }
-})
+});
 //Lưu dữ liệu đang nhập vào session
 watch(
   () => [formData.name, formData.email],
   ([newName, newEmail]) => {
     const dataSaved = {
       name: newName,
-      email: newEmail
-    }
+      email: newEmail,
+    };
     sessionStorage.setItem("register_form_draft", JSON.stringify(dataSaved));
-  }
-)
+  },
+);
 const togglePassword = () => {
   isPasswordHidden.value = !isPasswordHidden.value;
 };
@@ -53,6 +53,11 @@ const handleRegister = async () => {
   apiErrors.email = "";
   apiErrors.password = "";
   apiErrors.confirmPassword = "";
+  apiErrors.name="";
+  if (!formData.name.trim()) {
+    apiErrors.name = "Bạn chưa nhập tên!";
+    return;
+  }
   if (formData.password !== formData.confirmPassword) {
     apiErrors.confirmPassword = "Mật khẩu nhập lại không khớp!";
     return;
@@ -93,7 +98,7 @@ const handleRegister = async () => {
   <div class="auth-wrapper">
     <h1 class="auth-title">Register</h1>
 
-    <form @submit.prevent="handleRegister">
+    <form @submit.prevent="handleRegister" novalidate>
       <div class="form-group">
         <BaseInput
           label="Full Name"
@@ -103,6 +108,9 @@ const handleRegister = async () => {
           class="auth-input"
           required
         />
+        <Transition name="slide-fade">
+          <span v-if="apiErrors.name" class="error-text">{{ apiErrors.name }}</span>
+        </Transition>
       </div>
 
       <div class="form-group">
@@ -114,7 +122,9 @@ const handleRegister = async () => {
           class="auth-input"
           required
         />
-        <span v-if="apiErrors.email" class="error-text">{{ apiErrors.email }}</span>
+        <Transition name="slide-fade">
+          <span v-if="apiErrors.email" class="error-text">{{ apiErrors.email }}</span>
+        </Transition>
       </div>
 
       <div class="form-group form-group-password">
@@ -129,7 +139,9 @@ const handleRegister = async () => {
         <button type="button" class="btn btn-link toggle-password" @click="togglePassword">
           {{ isPasswordHidden ? "Show" : "Hide" }}
         </button>
-        <span v-if="apiErrors.password" class="error-text">{{ apiErrors.password }}</span>
+        <Transition name="slide-fade">
+          <span v-if="apiErrors.password" class="error-text">{{ apiErrors.password }}</span>
+        </Transition>
       </div>
 
       <div class="form-group form-group-password" style="margin-bottom: 2.5rem">
@@ -144,9 +156,11 @@ const handleRegister = async () => {
         <button type="button" class="btn btn-link toggle-password" @click="toggleConfirmPassword">
           {{ isConfirmPasswordHidden ? "Show" : "Hide" }}
         </button>
-        <span v-if="apiErrors.confirmPassword" class="error-text">{{
-          apiErrors.confirmPassword
-        }}</span>
+        <Transition name="slide-fade">
+          <span v-if="apiErrors.confirmPassword" class="error-text">{{
+            apiErrors.confirmPassword
+          }}</span>
+        </Transition>
       </div>
 
       <BaseButton text="Create Account" type="submit" variant="auth" />
@@ -238,5 +252,25 @@ const handleRegister = async () => {
   margin-top: 0.5rem;
   font-weight: 500;
   text-align: left;
+}
+
+/* HIỆU ỨNG TRANSITION CỦA VUE */
+
+/* 1. Thiết lập tốc độ và kiểu chuyển động */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease-in-out;
+  max-height: 50px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+/* 2. Trạng thái lúc bắt đầu xuất hiện (enter-from) và lúc kết thúc biến mất (leave-to) */
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  transform: translateY(-5px);
 }
 </style>
