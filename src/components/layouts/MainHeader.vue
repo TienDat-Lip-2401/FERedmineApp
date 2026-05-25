@@ -12,6 +12,9 @@ const handleLogout = () => {
 const goToProfile = () => {
   router.push("/users/profile");
 };
+const goToResetPassword = () => {
+  router.push("/auth/reset-password");
+};
 </script>
 
 <template>
@@ -45,7 +48,9 @@ const goToProfile = () => {
           </div>
         </template>
         <div class="menu-item" @click="goToProfile"><i class="icon-edit"></i> Sửa thông tin</div>
-        <div class="menu-item" @click="goToProfile"><i class="icon-edit"></i> Đổi mật khẩu</div>
+        <div class="menu-item" @click="goToResetPassword">
+          <i class="icon-edit"></i> Đổi mật khẩu
+        </div>
         <div class="menu-item delete" @click="handleLogout">
           <i class="icon-logout"></i> Đăng xuất
         </div>

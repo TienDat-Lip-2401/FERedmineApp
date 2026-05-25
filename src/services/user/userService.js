@@ -14,5 +14,9 @@ export const userService =  {
     },
     checkEmail: (email) => {
         return http.get(`/user/check-email?email=${encodeURIComponent(email)}`);
+    },
+    create: (data) => {
+        return http.post("/user/create", data);
     }
+
 }

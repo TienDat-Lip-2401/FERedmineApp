@@ -99,7 +99,7 @@ defineEmits(['update:modelValue']);
 }
 
 .field-input:focus {
-  border-color: #ff3b3f; /* Đổi sang màu đỏ Redmine của Đạt cho đồng bộ */
+  border-color: #737370; /* Đổi sang màu đỏ Redmine của Đạt cho đồng bộ */
   box-shadow: 0 0 0 2px rgba(255, 59, 63, 0.1);
 }
 

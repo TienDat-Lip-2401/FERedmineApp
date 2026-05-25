@@ -72,5 +72,32 @@ export const useUserStore = defineStore("user", () => {
       throw error; // Ném lỗi ra ngoài cho UI hiển thị chữ đỏ
     }
   };
-  return { users, isLoading, error, fetchUsers, deleteUser, getMe, updateUser, checkEmailExists };
+  const addUser = async (data) => {
+    try {
+      const response = await userService.create(data);
+      if (response.statusCode === 200 || response.statusCode === 201) {
+        if (response.data) {
+          await fetchUsers();
+        }
+        return { success: true, message: response.message || "Tạo người dùng thành công!" };
+      } else {
+        return { success: false, message: response.message || "Tạo người dùng thất bại." };
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || "Có lỗi xảy ra khi tạo mới người dùng";
+      console.error("UserStore Create Error:", error);
+      return { success: false, message: errorMsg };
+    }
+  };
+  return {
+    users,
+    isLoading,
+    error,
+    fetchUsers,
+    deleteUser,
+    getMe,
+    updateUser,
+    checkEmailExists,
+    addUser,
+  };
 });

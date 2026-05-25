@@ -33,7 +33,9 @@ const handleSend = async () => {
     const errorMsg = error.response?.data?.message || "Lỗi máy chủ. Vui lòng thử lại sau.";
     emailError.value = errorMsg;
   } finally {
-    isSubmitting.value = false; // Xong việc thì nhả nút ra
+    isSubmitting.value = false;
+    email.value =""
+    // Xong việc thì nhả nút ra
   }
 };
 </script>
