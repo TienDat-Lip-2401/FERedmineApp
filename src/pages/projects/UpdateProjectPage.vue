@@ -1,34 +1,32 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import BaseInput from "@/components/common/BaseInput.vue";
 import AddMemberModal from "@/components/project/AddMemberModal.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
 import trashIcon from "@/assets/icons/trash.svg";
 const projectStore = useProjectStore();
+const route = useRoute();
 const router = useRouter();
+//
+const currentProjectId = ref(null);
+//
 const isModalOpen = ref(false);
-// Xử lý xác nhận xóa thành viên
 const isConfirmOpen = ref(false);
+//
 const memberIndexToDelete = ref(null);
-const form = ref({
-  projectCode: "",
-  title: "",
-  startDate: "",
-  endDate: "",
-  description: "",
-  pmId: "",
-  status: 1,
-  isPublic: false,
-  isActive: true,
-  members: [],
-  stats: [
-    { label: "Progress", current: Math.ceil(Math.random() * 100), total: 100 },
-    { label: "Tasks", current: Math.ceil(Math.random() * 100), total: 600 },
-    { label: "Bugs", current: Math.ceil(Math.random() * 100), total: 100 },
-  ],
-});
+const triggerDelete = (index) => {
+  memberIndexToDelete.value = index;
+  isConfirmOpen.value = true;
+};
+const confirmDelete = async () => {
+  if (memberIndexToDelete.value !== null) {
+    form.value.members.splice(memberIndexToDelete.value, 1);
+    isConfirmOpen.value = false;
+    memberIndexToDelete.value = null;
+  }
+};
 const getRoleName = (roleId) => {
   const roles = {
     1: "Backend Developer",
@@ -36,84 +34,97 @@ const getRoleName = (roleId) => {
     3: "Project Manager",
     4: "Tester",
   };
-  return roles[roleId] || "Member";
-};
-const triggerDelete = (index) => {
-  memberIndexToDelete.value = index;
-  isConfirmOpen.value = true;
-};
-const confirmDelete = () => {
-  if (memberIndexToDelete.value !== null) {
-    form.value.members.splice(memberIndexToDelete.value, 1);
-    isConfirmOpen.value = false;
-    memberIndexToDelete.value = null;
-  }
+  return roles[String(roleId)] || "Member";
 };
 const onAddMembers = (selectedList) => {
   if (!selectedList || selectedList.length === 0) return;
-
   selectedList.forEach((newMember) => {
-    // Check trùng lặp bằng userId
-    const isExisted = form.value.members.some(
-      (m) => (m.userId || m.id) === (newMember.userId || newMember.id),
-    );
-    console.log(newMember);
+    const isExisted = form.value.members.some((m) => {
+      (m.userId || m.id) === (newMember.userId || newMember.id);
+    });
     if (!isExisted) {
       form.value.members.push({
-        userId: newMember.id,
-        userName: newMember.name,
-        email: newMember.userEmail,
-        roleId: parseInt(newMember.roleId),
-        roleName: getRoleName(newMember.roleId),
+        userId: newMember.id || newMember.userId,
+        userName: newMember.name || newMember.userName,
+        roleId: newMember.roleId,
+        roleName: getRoleName(newMember.roleId), // Chuyển số 1,2,3,4 thành string
       });
     }
   });
-
-  isModalOpen.value = false;
 };
 const handleSave = async () => {
   try {
-    // Đóng gói Payload chuẩn theo DTO của Backend C#
     const projectPayload = {
-      projectCode: form.value.projectCode,
+      projectCode: String(form.value.id),
       title: form.value.title,
       startDate: form.value.startDate ? new Date(form.value.startDate).toISOString() : null,
       endDate: form.value.endDate ? new Date(form.value.endDate).toISOString() : null,
       description: form.value.description,
       projectManagerId: parseInt(form.value.pmId) || 0,
-      status: form.value.status,
       isPublic: form.value.isPublic,
       isActive: form.value.isActive,
+      status: form.value.status,
 
-      // Mảng memberIds chỉ lấy ID và Role để gửi lên
       memberIds: form.value.members.map((m) => ({
         userId: parseInt(m.userId || m.id),
         roleId: parseInt(m.roleId),
       })),
     };
     console.log(projectPayload);
-    // Gọi hàm addProject từ Store
-    await projectStore.addProject(projectPayload);
-
-    // Tạo thành công thì quay về trang danh sách
+    await projectStore.updateProject(currentProjectId.value, projectPayload);
     router.push("/projects");
   } catch (error) {
-    console.error("Lỗi khi tạo dự án:", error);
-    alert("Có lỗi xảy ra khi tạo dự án, vui lòng thử lại!");
+    console.error("Lỗi khi load dữ liệu:", error);
   }
 };
+
+const form = ref({
+  id: "",
+  title: "",
+  startDate: "",
+  endDate: "",
+  description: "",
+  pmId: "",
+  status: 0,
+  isPublic: false,
+  isActive: true,
+  members: [],
+});
+const formatDateForInput = (dateString) => {
+  if (!dateString) return "";
+  return dateString.split("T")[0];
+};
+onMounted(async () => {
+  const projectId = route.params.id;
+  currentProjectId.value = projectId;
+  if (projectId) {
+    try {
+      await projectStore.fetchProjectDetail(projectId);
+      const projectDetail = projectStore.currentProject;
+      console.log("Project Detail", projectDetail);
+      if (projectDetail) {
+        form.value.id = projectDetail.id;
+        form.value.title = projectDetail.title;
+        form.value.startDate = formatDateForInput(projectDetail.startDate);
+        form.value.endDate = formatDateForInput(projectDetail.endDate);
+        form.value.description = projectDetail.description;
+        form.value.pmId = projectDetail.projectManagerId;
+        form.value.members = projectDetail.members;
+        form.value.isActive = projectDetail.isActive;
+        form.value.status = projectDetail.status;
+      }
+    } catch (error) {
+      console.error("Lỗi khi load dữ liệu dự án:", error);
+    }
+  }
+});
 </script>
 
 <template>
   <div class="create-project-container">
-    <h2 class="page-title">Create Project</h2>
+    <h2 class="page-title">Edit Project</h2>
     <div class="form-card">
-      <BaseInput
-        label="Project Code"
-        v-model="form.projectCode"
-        required
-        placeholder="Nhập mã dự án..."
-      />
+      <BaseInput label="ID" v-model="form.id" required placeholder="Nhập mã dự án..." />
       <BaseInput label="Title" v-model="form.title" required placeholder="Nhập tên dự án..." />
 
       <div class="input-group">
@@ -155,9 +166,9 @@ const handleSave = async () => {
             <tr v-for="(m, index) in form.members" :key="index">
               <td>{{ index + 1 }}</td>
               <td class="font-bold">{{ m.userName }}</td>
-              <td>{{ getRoleName(m.roleId) }}</td>
+              <td>{{ m.roleName }}</td>
               <td class="text-center">
-                <button class="btn-delete" @click="triggerDelete(index)">
+                <button class="btn-delete" @click="triggerDelete(index, m)">
                   <img :src="trashIcon" alt="Delete" />
                 </button>
               </td>
@@ -193,7 +204,7 @@ const handleSave = async () => {
     </div>
     <AddMemberModal
       :isOpen="isModalOpen"
-      :projectId="0"
+      :projectId="currentProjectId"
       :currentMembers="form.members"
       @close="isModalOpen = false"
       @add="onAddMembers"
@@ -285,7 +296,8 @@ const handleSave = async () => {
 }
 
 .members-table td {
-  padding: 1.2rem;
+  padding: 1.6rem;
+  font-weight: 400;
   border-bottom: 1px solid #edf2f7;
   font-size: 1.4rem;
 }

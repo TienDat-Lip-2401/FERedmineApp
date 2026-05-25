@@ -3,6 +3,7 @@ import { ref, computed, watch } from "vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import { usePositionStore } from "@/stores/positionStore";
+
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
   isOpen: Boolean,

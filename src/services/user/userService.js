@@ -11,5 +11,8 @@ export const userService =  {
     },
     update: (id, data) => {
         return http.put(`/user/${id}`, data);
+    },
+    checkEmail: (email) => {
+        return http.get(`/user/check-email?email=${encodeURIComponent(email)}`);
     }
 }

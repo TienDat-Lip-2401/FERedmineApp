@@ -3,11 +3,14 @@ import { ref } from "vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import { useModalStore } from "@/stores/modalStore";
+import { useUserStore } from "@/stores/userStore";
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const modalStore = useModalStore();
+const userStore = useUserStore();
 const email = ref("");
 const emailError = ref("");
-const handleSend = () => {
+const isSubmitting = ref(false);
+const handleSend = async () => {
   emailError.value = "";
   if (!email.value) {
     emailError.value = "Vui lòng nhập địa chỉ email.";
@@ -17,14 +20,21 @@ const handleSend = () => {
     emailError.value = "Định dạng email không hợp lệ.";
     return;
   }
-  console.log("Gửi yêu cầu reset pass cho:", email.value);
-
-  modalStore.showModal({
-    title: "Thành công",
-    message: "Một đường dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư email của bạn!",
-    type: "success",
-  });
-  email.value = "";
+  isSubmitting.value = true;
+  try {
+    await userStore.checkEmailExists(email.value);
+    modalStore.showModal({
+      title: "Thành công",
+      message:
+        "Một đường dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư email của bạn!",
+      type: "success",
+    });
+  } catch (error) {
+    const errorMsg = error.response?.data?.message || "Lỗi máy chủ. Vui lòng thử lại sau.";
+    emailError.value = errorMsg;
+  } finally {
+    isSubmitting.value = false; // Xong việc thì nhả nút ra
+  }
 };
 </script>
 

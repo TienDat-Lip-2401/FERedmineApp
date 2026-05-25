@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { userService } from "@/services/user";
+
 export const useUserStore = defineStore("user", () => {
   const users = ref([]);
   const isLoading = ref(false);
@@ -62,5 +63,14 @@ export const useUserStore = defineStore("user", () => {
       return { success: false, message: errorMsg };
     }
   };
-  return { users, isLoading, error, fetchUsers, deleteUser, getMe, updateUser };
+  const checkEmailExists = async (email) => {
+    try {
+      const response = await userService.checkEmail(email);
+      return response;
+    } catch (error) {
+      console.error("UserStore Check Email Error:", error);
+      throw error; // Ném lỗi ra ngoài cho UI hiển thị chữ đỏ
+    }
+  };
+  return { users, isLoading, error, fetchUsers, deleteUser, getMe, updateUser, checkEmailExists };
 });

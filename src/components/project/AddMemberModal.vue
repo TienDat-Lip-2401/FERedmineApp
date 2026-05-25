@@ -1,13 +1,18 @@
 <script setup>
-import { ref, computed } from "vue";
-import { useUserStore } from "@/stores/userStore.js";
-
+import { ref, computed, watch } from "vue";
+import { useProjectStore } from "@/stores/projectStore";
+import { useUserStore } from "@/stores/userStore";
 const userStore = useUserStore();
+const projectStore = useProjectStore();
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
   isOpen: Boolean,
+  projectId: [Number, String],
+  currentMembers: {
+    type: Array,
+    default: () => [],
+  },
 });
-
 const emit = defineEmits(["close", "add"]);
 const removeVietnameseTones = (str) => {
   if (!str) return "";
@@ -19,41 +24,81 @@ const removeVietnameseTones = (str) => {
     .toLowerCase();
 };
 const searchQuery = ref("");
-const displayedUsers = ref([...userStore.users]); 
-const availableUsers = computed(() => userStore.users);
-// Lưu trữ những user được check
 const selectedUsers = ref([]);
-
+const loadAvailableUsers = async () => {
+  if (props.projectId && props.projectId !== 0 && props.projectId !== "0") {
+    // Trang Update
+    await projectStore.fetchAvailableUsers(props.projectId);
+  } else {
+    // Trang Create (projectId = 0)
+    if (userStore.users.length === 0) {
+      await userStore.fetchUsers();
+    }
+  }
+};
+watch(
+  () => props.isOpen,
+  (newVal) => {
+    if (newVal) {
+      loadAvailableUsers();
+      selectedUsers.value = [];
+      searchQuery.value = "";
+    }
+  },
+  {
+    immediate: true,
+  },
+);
+const filteredUsers = computed(() => {
+  const query = removeVietnameseTones(searchQuery.value.trim());
+  // eslint-disable-next-line no-useless-assignment
+  let users = [];
+  if (props.projectId && props.projectId !== 0 && props.projectId !== "0") {
+    users = projectStore.availableUsers || [];
+  } else {
+    users = userStore.users || [];
+  }
+  const existingMembers = Array.isArray(props.currentMembers) ? props.currentMembers : [];
+  const existingIds = existingMembers.map((m) => m.userId || m.id);
+  users = users.filter((u) => !existingIds.includes(u.id));
+  if (!query) return users;
+  return users.filter((user) => removeVietnameseTones(user.name).includes(query));
+});
 const toggleUser = (user) => {
-  const index = selectedUsers.value.findIndex(u => u.id === user.id);
+  const index = selectedUsers.value.findIndex((u) => u.id === user.id);
   if (index > -1) {
     selectedUsers.value.splice(index, 1);
   } else {
-    selectedUsers.value.push({ ...user });
+    selectedUsers.value.push({ ...user, roleId: "" });
   }
 };
-
+const isSelected = (userId) => {
+  return selectedUsers.value.some((u) => u.id === userId);
+};
+const getRoleForSelect = (userId) => {
+  const selectedUser = selectedUsers.value.find((u) => u.id == userId);
+  return selectedUser ? selectedUser.roleId : "";
+};
+const updateRole = (userId, newRole) => {
+  const selectedUser = selectedUsers.value.find((u) => u.id === userId);
+  if (selectedUser) {
+    selectedUser.roleId = newRole;
+  }
+};
 const handleApply = () => {
-  // Chỉ lấy những user đã được chọn và có gán role
-  const finalMembers = selectedUsers.value.filter(u => u.role !== "");
+  const finalMembers = selectedUsers.value.filter((u) => u.roleId !== "");
+  if (selectedUsers.value.length > 0 && finalMembers.length === 0) {
+    alert("Vui lòng chọn Role (Vai trò) cho những thành viên bạn vừa tích chọn!");
+    return;
+  }
   emit("add", finalMembers);
   handleClose();
 };
 
 const handleClose = () => {
-  selectedUsers.value = []; // Reset khi đóng
+  selectedUsers.value = [];
+  searchQuery.value = "";
   emit("close");
-};
-const handleSearch = () => {
-  const query = removeVietnameseTones(searchQuery.value.trim().toLowerCase());
-  if (query === "") {
-    displayedUsers.value = [...availableUsers.value];
-  } else {
-    displayedUsers.value = availableUsers.value.filter(user =>
-      removeVietnameseTones(user.name).includes(query) ||
-      user.email.trim().toLowerCase().includes(query)
-    );
-  }
 };
 </script>
 
@@ -63,10 +108,10 @@ const handleSearch = () => {
       <h2 class="modal-title">Add member</h2>
 
       <div class="search-section">
-        <input 
-          type="text" 
-          v-model="searchQuery" 
-          placeholder="Search user..." 
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search user..."
           class="search-input"
         />
         <button class="btn-search" @click="handleSearch">Search</button>
@@ -82,11 +127,11 @@ const handleSearch = () => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in displayedUsers" :key="user.id">
+            <tr v-for="user in filteredUsers" :key="user.id">
               <td>
-                <input 
-                  type="checkbox" 
-                  :checked="selectedUsers.some(u => u.id === user.id)"
+                <input
+                  type="checkbox"
+                  :checked="isSelected(user.id)"
                   @change="toggleUser(user)"
                   class="custom-checkbox"
                 />
@@ -98,12 +143,17 @@ const handleSearch = () => {
                 </div>
               </td>
               <td>
-                <select v-model="user.role" class="role-select">
+                <select
+                  :value="getRoleForSelect(user.id)"
+                  @change="(e) => updateRole(user.id, e.target.value)"
+                  class="role-select"
+                  :disabled="!isSelected(user.id)"
+                >
                   <option value="">Select role...</option>
-                  <option value="Backend Developer">Backend Developer</option>
-                  <option value="FrontEnd Developer">FrontEnd Developer</option>
-                  <option value="Project Manager">Project Manager</option>
-                  <option value="Tester">Tester</option>
+                  <option value="1">Backend Developer</option>
+                  <option value="2">FrontEnd Developer</option>
+                  <option value="3">Project Manager</option>
+                  <option value="4">Tester</option>
                 </select>
               </td>
             </tr>
@@ -122,8 +172,10 @@ const handleSearch = () => {
 <style scoped>
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
@@ -136,7 +188,7 @@ const handleSearch = () => {
   width: 600px;
   padding: 30px;
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .modal-title {
@@ -205,8 +257,14 @@ const handleSearch = () => {
   flex-direction: column;
 }
 
-.user-name { font-weight: 600; color: #2d3748; }
-.user-email { font-size: 12px; color: #a0aec0; }
+.user-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+.user-email {
+  font-size: 12px;
+  color: #a0aec0;
+}
 
 .role-select {
   width: 100%;
@@ -219,7 +277,8 @@ const handleSearch = () => {
 
 /* Checkbox Style */
 .custom-checkbox {
-  width: 18px; height: 18px;
+  width: 18px;
+  height: 18px;
   accent-color: #ff3b3f;
   cursor: pointer;
 }
@@ -252,7 +311,9 @@ const handleSearch = () => {
 }
 
 /* Inherit Font */
-button, input, select {
+button,
+input,
+select {
   font-family: inherit;
 }
 </style>

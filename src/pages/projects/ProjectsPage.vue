@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import BasePagination from "@/components/common/BasePagination.vue";
 import ProjectCard from "@/components/project/ProjectCard.vue";
@@ -15,20 +15,28 @@ let debounceTimeout = null;
 const itemsPerPage = ref(6);
 const projectIdToDelete = ref(null);
 const isConfirmOpen = ref(false);
-
+onMounted(async () => {
+  try {
+    await projectStore.fetchProjects();
+  } catch (error) {
+    console.error("Lỗi khi load danh sách project:", error);
+  }
+});
 const openDeleteModal = (id) => {
   console.log("Project ID to delete:", id, typeof id);
   projectIdToDelete.value = id;
   isConfirmOpen.value = true;
   console.log(isConfirmOpen.value);
 };
-const handleConfirmDelete = () => {
-  console.log("Confirmed deletion for project ID:", projectIdToDelete.value, typeof projectIdToDelete.value);
+const handleConfirmDelete = async () => {
   if (projectIdToDelete.value) {
-    console.log("Deleting project with ID:", projectIdToDelete.value, typeof projectIdToDelete.value);
-    projectStore.deleteProject(projectIdToDelete.value);
-    isConfirmOpen.value = false;
-    projectIdToDelete.value = null;
+    try {
+      await projectStore.deleteProject(projectIdToDelete.value);
+      isConfirmOpen.value = false;
+      projectIdToDelete.value = null;
+    } catch (error) {
+      console.error("Xóa thất bại:", error);
+    }
   }
 };
 const gridClass = computed(() => {
@@ -61,7 +69,7 @@ const filteredProjects = computed(() => {
 // 4. Tính tổng số trang (Dùng Math.ceil cho ngắn gọn thay vì if/else)
 const totalItems = computed(() => filteredProjects.value.length);
 const totalPages = computed(() => {
-  return totalItems.value >0 ? Math.ceil(totalItems.value / itemsPerPage.value) : 1;
+  return totalItems.value > 0 ? Math.ceil(totalItems.value / itemsPerPage.value) : 1;
 });
 </script>
 
@@ -76,7 +84,12 @@ const totalPages = computed(() => {
     </div>
     <!-- Project List -->
     <div :class="['projects-grid', gridClass]">
-      <ProjectCard v-for="item in paginatedProjects" :key="item.id" :project="item" @delete="openDeleteModal"/>
+      <ProjectCard
+        v-for="item in paginatedProjects"
+        :key="item.id"
+        :project="item"
+        @delete="openDeleteModal"
+      />
     </div>
     <!-- Pagination -->
     <BasePagination

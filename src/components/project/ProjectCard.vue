@@ -1,8 +1,11 @@
 <script setup>
-// import { ref } from "vue";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 import MenuIcon from "@/assets/icons/Menu.svg";
 import BaseMenu from "@/components/common/BaseMenu.vue";
-
+const authStore = useAuthStore();
+const router = useRouter();
 const props = defineProps({
   project: {
     type: Object,
@@ -10,15 +13,39 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["edit", "delete"]);
+const currentUser = computed(() => authStore.user);
+const hasPermission = computed(() => {
+  if(!currentUser.value) return false;
+  const isAdmin = currentUser.value.positions?.includes("Admin");
+  const isProjectManager = currentUser.value.id === props.project.projectManagerId;
+  return isAdmin || isProjectManager;
+})
 const handleEdit = () => {
+  router.push({
+    name: "UpdateProject",
+    params: { id: props.project.id },
+  });
   console.log("Edit project with ID:", props.project.id);
   emit("edit", props.project.id);
 };
 
 const handleDelete = () => {
-  
   emit("delete", props.project.id);
 };
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+const randomNumber = () => {
+  return Math.floor(Math.random() * 101);
+};
+const progressPercent = randomNumber();
+const tasksPercent = randomNumber();
+const bugsPercent = randomNumber();
 </script>
 
 <template>
@@ -27,10 +54,10 @@ const handleDelete = () => {
     <div class="card-header">
       <div class="title-group">
         <h3>{{ project.title }}</h3>
-        <span class="project-id">{{ project.code }}</span>
+        <span class="project-id">{{ project.projectCode }}</span>
       </div>
 
-      <BaseMenu>
+      <BaseMenu v-if="hasPermission">
         <template #trigger>
           <button class="btn-more">
             <img :src="MenuIcon" alt="Menu" />
@@ -44,7 +71,7 @@ const handleDelete = () => {
     <!-- Body -->
     <div class="card-body">
       <p class="pm-text">
-        PM: <span>{{ project.pmName }}</span>
+        PM: <span>PM-{{ project.projectManagerId }}</span>
       </p>
       <div class="members-section">
         <span class="members-label">Members:</span>
@@ -55,9 +82,9 @@ const handleDelete = () => {
             class="avatar-item"
             :style="{ zIndex: 10 - index }"
           >
-            <img v-if="member.avatar" :src="member.avatar" :alt="member.name" />
+            <img v-if="member.avatar" :src="member.avatar" :alt="member.userName" />
             <div v-else class="avatar-placeholder" :class="'color-' + (index % 4)">
-              {{ member.name.charAt(0) }}
+              {{ member.userName.trim().split(/\s+/).pop().charAt(0).toUpperCase() }}
             </div>
           </div>
 
@@ -67,15 +94,47 @@ const handleDelete = () => {
         </div>
       </div>
       <div class="stat-list">
-        <div class="stat-item" v-for="stat in project.stats" :key="stat.label">
+        <!-- <div class="stat-item" v-for="stat in project.stats" :key="stat.label">
           <div class="stat-label">
-            <span>{{ stat.label }}:</span>
-            <span>{{ stat.current }}/{{ stat.total }}</span>
+            <span>Progress: </span>
+            <span>75%</span>
           </div>
           <div class="progress-bar">
             <div
               class="progress-fill"
-              :style="{ width: (stat.current / stat.total) * 100 + '%' }"
+              style="width: 75%;"
+            ></div>
+          </div>
+        </div> -->
+        <div class="stat-item">
+          <div class="stat-label">
+            <span>Progress:</span>
+            <span>75%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+          </div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-label">
+            <span>Tasks:</span>
+            <span>42/50</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: tasksPercent + '%' }"></div>
+          </div>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-label">
+            <span>Bugs:</span>
+            <span>3/15</span>
+          </div>
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              :style="{ width: bugsPercent + '%', backgroundColor: '#ef4444' }"
             ></div>
           </div>
         </div>
@@ -83,9 +142,14 @@ const handleDelete = () => {
     </div>
     <!-- Footer -->
     <div class="card-footer">
-      <span class="status-badge" :class="project.status">{{ project.status }}</span>
+      <span class="status-badge" :class="project.isActive ? 'Active' : 'Pending'">{{
+        project.isActive ? "Active" : "Pending"
+      }}</span>
       <span class="timeline"
-        >Timeline: <span class="time">{{ project.timeline }}</span></span
+        >Timeline:
+        <span class="time"
+          >{{ formatDate(project.startDate) }} - {{ formatDate(project.endDate) }}</span
+        ></span
       >
     </div>
   </div>

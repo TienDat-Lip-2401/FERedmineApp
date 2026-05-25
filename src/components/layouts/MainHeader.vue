@@ -33,9 +33,11 @@ const goToProfile = () => {
               <p class="user-name">{{ authStore.user?.name || "Chưa đăng nhập" }}</p>
               <p class="user-role">
                 {{
-                  authStore.user?.positions?.includes("Project Manager")
-                    ? "Project Manager"
-                    : authStore.user?.positions?.[0]
+                  authStore.user?.positions?.includes("Admin")
+                    ? "Admin"
+                    : authStore.user?.positions?.includes("Project Manager")
+                      ? "Project Manager"
+                      : authStore.user?.positions?.[0]
                 }}
               </p>
             </div>

@@ -38,6 +38,15 @@ export const useAuthStore = defineStore("auth", () => {
     } catch (error) {
       throw error;
     }
-  }
-  return { accessToken, user, refreshToken, setAccessToken, setAuthData, setUser, logout, register };
+  };
+  return {
+    accessToken,
+    user,
+    refreshToken,
+    setAccessToken,
+    setAuthData,
+    setUser,
+    logout,
+    register,
+  };
 });

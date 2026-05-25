@@ -16,6 +16,7 @@ import ProjectsPage from "@/pages/projects/ProjectsPage.vue";
 import CreateUserPage from "@/pages/user/CreateUserPage.vue";
 import ProfilePage from "@/pages/user/ProfilePage.vue";
 import RegisterPage from "@/pages/auth/RegisterPage.vue";
+import UpdateProjectPage from "@/pages/projects/UpdateProjectPage.vue";
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -38,6 +39,11 @@ const router = createRouter({
           path: "projects/create",
           name: "CreateProject",
           component: CreateProjectPage,
+        },
+        {
+          path: "projects/update/:id",
+          name: "UpdateProject",
+          component: UpdateProjectPage,
         },
         {
           path: "tasks",
@@ -104,8 +110,8 @@ const router = createRouter({
         {
           path: "register",
           name: "Register",
-          component: RegisterPage
-        }
+          component: RegisterPage,
+        },
       ],
     },
   ],
@@ -116,8 +122,8 @@ router.beforeEach((to, from) => {
   const isAuthenticated = !!localStorage.getItem("refresh_token");
 
   // 2. Kiểm tra các thuộc tính meta của Route hiện tại (bao gồm cả các Route cha)
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const isGuestOnly = to.matched.some(record => record.meta.guestOnly);
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const isGuestOnly = to.matched.some((record) => record.meta.guestOnly);
 
   // TRƯỜNG HỢP 1: Truy cập trang yêu cầu đăng nhập mà chưa đăng nhập
   if (requiresAuth && !isAuthenticated) {
