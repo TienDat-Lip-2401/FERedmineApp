@@ -34,7 +34,7 @@ const handleSend = async () => {
     emailError.value = errorMsg;
   } finally {
     isSubmitting.value = false;
-    email.value =""
+    email.value = "";
     // Xong việc thì nhả nút ra
   }
 };

@@ -74,7 +74,7 @@ const toggleConfirmPassword = () => {
   <div class="auth-wrapper">
     <h1 class="auth-title">Reset Password</h1>
 
-    <form @submit.prevent="handleReset">
+    <form @submit.prevent="handleReset" novalidate>
       <div class="form-group form-group-password">
         <BaseInput
           label="New Password"

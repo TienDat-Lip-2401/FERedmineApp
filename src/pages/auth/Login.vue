@@ -89,7 +89,7 @@ const handleLogin = async () => {
 <template>
   <div class="login-wrapper">
     <h1 class="auth-title">Login</h1>
-    <form action="" @submit.prevent="handleLogin">
+    <form action="" @submit.prevent="handleLogin" novalidate>
       <div class="form-group">
         <BaseInput
           label="Email"
