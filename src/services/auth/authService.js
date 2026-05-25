@@ -9,4 +9,7 @@ export const authService = {
   register: (data) => {
     return http.post("/auth/register", data);
   },
+  resetMyPassword: (data) => {
+    return http.post("/auth/reset-my-password", data); 
+  },
 };

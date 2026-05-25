@@ -2,8 +2,12 @@
 import { reactive, ref } from "vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
+import { useRouter } from "vue-router";
 import { useModalStore } from "@/stores/modalStore";
+import { useAuthStore } from "@/stores/authStore";
+const router = useRouter();
 const modalStore = useModalStore();
+const authStore = useAuthStore();
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 const formData = reactive({
   password: "",
@@ -15,8 +19,8 @@ const formError = reactive({
 });
 const isPasswordHidden = ref(true);
 const isConfirmPasswordHidden = ref(true);
-
-const handleReset = () => {
+const isLoading = ref(false);
+const handleReset = async () => {
   formError.password = "";
   formError.confirmPassword = "";
   if (!formData.password) {
@@ -34,14 +38,29 @@ const handleReset = () => {
     formError.confirmPassword = "Mật khẩu xác nhận không khớp, vui lòng kiểm tra lại!";
     return;
   }
+  try {
+    isLoading.value = true;
 
-  modalStore.showModal({
-    title: "Thành công",
-    message: "Chúc mừng! Bạn đã đổi mật khẩu thành công.",
-    type: "success",
-  });
-  formData.password = "";
-  formData.confirmPassword = "";
+    // Gửi duy nhất newPassword xuống C#
+    await authStore.resetPassword({
+      newPassword: formData.password,
+    });
+    modalStore.showModal({
+      title: "Thành công",
+      message: "Chúc mừng! Bạn đã đổi mật khẩu thành công.",
+      type: "success",
+    });
+    formData.password = "";
+    formData.confirmPassword = "";
+
+    // 3. Đẩy về trang chủ
+    router.push("/");
+  } catch (error) {
+    formError.password =
+      error.response?.data?.message || "Đổi mật khẩu thất bại, vui lòng thử lại!";
+  } finally {
+    isLoading.value = false;
+  }
 };
 const togglePassword = () => {
   isPasswordHidden.value = !isPasswordHidden.value;

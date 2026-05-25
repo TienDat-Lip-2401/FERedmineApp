@@ -39,6 +39,21 @@ export const useAuthStore = defineStore("auth", () => {
       throw error;
     }
   };
+  const clearFirstLoginFlag = () => {
+    if (user.value) {
+      user.value.isFirstLogin = false;
+      localStorage.setItem("user", JSON.stringify(user.value));
+    }
+  };
+  const resetPassword = async (data) => {
+    try {
+      const response = await authService.resetMyPassword(data);
+      clearFirstLoginFlag();
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
   return {
     accessToken,
     user,
@@ -48,5 +63,7 @@ export const useAuthStore = defineStore("auth", () => {
     setUser,
     logout,
     register,
+    resetPassword,
+    clearFirstLoginFlag,
   };
 });

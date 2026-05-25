@@ -62,14 +62,19 @@ const handleLogin = async () => {
       password: formData.password,
     });
     console.log("Login successful:", response.data);
-    const { access_token, refresh_token, user_id, name, positions } = response.data;
+    const { access_token, refresh_token, user_id, name, positions, isFirstLogin } = response.data;
     authStore.setAuthData(access_token, refresh_token, {
       id: user_id,
       name: name,
       positions: positions,
+      isFirstLogin: isFirstLogin,
     });
     sessionStorage.removeItem("login_form_draft");
-    router.push("/");
+    if (isFirstLogin === true) {
+      router.push("/auth/reset-password");
+    } else {
+      router.push("/");
+    }
   } catch (error) {
     const errorMsg = error.response?.data?.message || "Đăng nhập không thành công";
 
