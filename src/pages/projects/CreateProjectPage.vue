@@ -5,10 +5,12 @@ import BaseInput from "@/components/common/BaseInput.vue";
 import AddMemberModal from "@/components/project/AddMemberModal.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
+import { useModalStore } from "@/stores/modalStore";
 import trashIcon from "@/assets/icons/trash.svg";
 const projectStore = useProjectStore();
 const router = useRouter();
 const isModalOpen = ref(false);
+const modalStore = useModalStore();
 // Xử lý xác nhận xóa thành viên
 const isConfirmOpen = ref(false);
 const memberIndexToDelete = ref(null);
@@ -98,8 +100,13 @@ const handleSave = async () => {
     // Tạo thành công thì quay về trang danh sách
     router.push("/projects");
   } catch (error) {
-    console.error("Lỗi khi tạo dự án:", error);
-    alert("Có lỗi xảy ra khi tạo dự án, vui lòng thử lại!");
+    const errorMessage =
+      error.response?.data?.message || "Đã xảy ra lỗi khi tạo dự án. Vui lòng thử lại!";
+    modalStore.showModal({
+      title: "Thất bại",
+      message: errorMessage,
+      type: "error", // Đổi type thành error để UI hiển thị màu đỏ/cảnh báo
+    });
   }
 };
 </script>
