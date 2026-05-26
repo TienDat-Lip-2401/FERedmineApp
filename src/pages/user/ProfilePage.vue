@@ -6,11 +6,16 @@ import { usePositionStore } from "@/stores/positionStore";
 import BaseInput from "@/components/common/BaseInput.vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
+import BaseLoading from "@/components/common/BaseLoading.vue";
 import trashIcon from "@/assets/icons/trash.svg";
 import AssignPositionModal from "@/components/user/AssignPositionModal.vue";
+import { useModalStore } from "@/stores/modalStore";
 const router = useRouter();
 const userStore = useUserStore();
 const positionStore = usePositionStore();
+const modalStore = useModalStore();
+const isLoading = ref(false);
+
 // Chuyen doi dinh dang ngay thang sang yyyy-mm-dd de hien thi tren input date
 const formatDate = (dateString) => {
   if (!dateString) return "";
@@ -41,6 +46,7 @@ const currentUserId = computed(() => {
 const positions = ref([]);
 onMounted(async () => {
   try {
+    isLoading.value = true;
     const response = await userStore.getMe();
     console.log("User info response:", response);
     if (response) {
@@ -65,6 +71,8 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error("Lỗi khi lấy thông tin user:", error);
+  } finally {
+    isLoading.value = false;
   }
 });
 const isAssignModalOpen = ref(false);
@@ -72,6 +80,7 @@ const onAddPositions = async () => {
   const userId = currentUserId.value;
   if (userId) {
     try {
+      isLoading.value = true;
       // 1. Kéo dữ liệu mới nhất từ Database về Store
       await positionStore.fetchUserPositions(userId);
 
@@ -79,6 +88,8 @@ const onAddPositions = async () => {
       positions.value = positionStore.userPositions;
     } catch (error) {
       console.error("Lỗi khi tải lại danh sách chức vụ:", error);
+    } finally {
+      isLoading.value = false;
     }
   }
   isAssignModalOpen.value = false;
@@ -99,17 +110,30 @@ const confirmDeletePosition = async () => {
   }
   if (positionIndexToDelete.value !== null) {
     try {
+      isLoading.value = true;
       const res = await positionStore.removePosition(userId, positionIndexToDelete.value);
       if (res.statusCode === 200) {
         positions.value = positions.value.filter((p) => p.id !== positionIndexToDelete.value);
-        alert("Xóa chức vụ khỏi người dùng thành công!");
+        modalStore.showModal({
+          title: "Thành công",
+          message: "Xóa chức vụ khỏi người dùng thành công!",
+          type: "success",
+        });
       } else {
-        alert(res.message || "Xóa chức vụ thất bại!");
+        modalStore.showModal({
+          title: "Thất bại",
+          message: "Xóa chức vụ thất bại!",
+          type: "error",
+        });
       }
     } catch (error) {
-      console.error("Lỗi khi xóa chức vụ:", error);
-      alert("Đã xảy ra lỗi hệ thống trong quá trình xóa.");
+      modalStore.showModal({
+        title: "Thất bại",
+        message: error.message,
+        type: "error",
+      });
     } finally {
+      isLoading.value = false;
       positionIndexToDelete.value = null;
       isConfirmOpen.value = false;
     }
@@ -117,6 +141,7 @@ const confirmDeletePosition = async () => {
 };
 const handleSave = async () => {
   try {
+    isLoading.value = true;
     const updatedData = {
       id: null,
       code: form.code,
@@ -138,7 +163,11 @@ const handleSave = async () => {
     const userId = userLocal?.id;
     const response = await userStore.updateUser(userId, updatedData);
     if (response.statusCode === 200 || response.success) {
-      alert("Cập nhật thông tin thành công!");
+      modalStore.showModal({
+        title: "Thành công",
+        message: "Cập nhật thông tin thành công!",
+        type: "success",
+      });
       await userStore.fetchUsers();
       router.push("/users");
     } else {
@@ -148,6 +177,8 @@ const handleSave = async () => {
     console.error("Lỗi khi lưu thông tin user:", error);
     const errorMsg = error.response?.data?.message || "Đã xảy ra lỗi hệ thống";
     alert(errorMsg);
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
@@ -243,6 +274,7 @@ const handleSave = async () => {
       @close="isAssignModalOpen = false"
       @add="onAddPositions"
     />
+    <BaseLoading :isLoading="isLoading" />
   </div>
 </template>
 

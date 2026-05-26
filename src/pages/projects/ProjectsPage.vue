@@ -5,6 +5,8 @@ import BasePagination from "@/components/common/BasePagination.vue";
 import ProjectCard from "@/components/project/ProjectCard.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
+import { useModalStore } from "@/stores/modalStore";
+const modalStore = useModalStore();
 const projectStore = useProjectStore();
 const currentPage = ref(1);
 // --- Tìm kiếm ---
@@ -23,20 +25,30 @@ onMounted(async () => {
   }
 });
 const openDeleteModal = (id) => {
-  console.log("Project ID to delete:", id, typeof id);
   projectIdToDelete.value = id;
   isConfirmOpen.value = true;
-  console.log(isConfirmOpen.value);
 };
 const handleConfirmDelete = async () => {
-  if (projectIdToDelete.value) {
-    try {
-      await projectStore.deleteProject(projectIdToDelete.value);
-      isConfirmOpen.value = false;
-      projectIdToDelete.value = null;
-    } catch (error) {
-      console.error("Xóa thất bại:", error);
-    }
+  if (!projectIdToDelete.value) return;
+  try {
+    await projectStore.deleteProject(projectIdToDelete.value);
+    isConfirmOpen.value = false;
+    projectIdToDelete.value = null;
+    modalStore.showModal({
+      title: "Thành công",
+      message: "Đã xóa dự án thành công!",
+      type: "success",
+    });
+  } catch (error) {
+    isConfirmOpen.value = false;
+    projectIdToDelete.value = null;
+    const errorMessage = error.response?.data?.message || "Xóa dự án thất bại. Vui lòng thử lại!";
+
+    modalStore.showModal({
+      title: "Từ chối",
+      message: errorMessage,
+      type: "error",
+    });
   }
 };
 const gridClass = computed(() => {

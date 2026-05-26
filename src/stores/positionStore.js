@@ -62,5 +62,20 @@ export const usePositionStore = defineStore("position", {
         throw error;
       }
     },
+    async getAllPositions() {
+      try {
+        const res = await positionService.getAllPosition();
+        if (res.statusCode === 200) {
+          // Gán vào state allPositions
+          this.allPositions = res.data || [];
+          return { success: true, data: res.data };
+        } else {
+          return { success: false, message: res.message };
+        }
+      } catch (error) {
+        console.error("Lỗi lấy tất cả chức vụ:", error);
+        throw error;
+      }
+    },
   },
 });

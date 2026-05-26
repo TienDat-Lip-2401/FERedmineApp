@@ -105,5 +105,19 @@ export const useProjectStore = defineStore("project", {
         this.isLoading = false;
       }
     },
+    async deleteProject(projectId) {
+      this.isLoading = true;
+      try {
+        const res = await projectService.delete(projectId);
+        if (res.statusCode === 200) {
+          this.projects = this.projects.filter((p) => p.id !== projectId);
+        }
+        return res;
+      } catch (error) {
+        throw error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
   },
 });

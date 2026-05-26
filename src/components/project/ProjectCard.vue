@@ -15,11 +15,11 @@ const props = defineProps({
 const emit = defineEmits(["edit", "delete"]);
 const currentUser = computed(() => authStore.user);
 const hasPermission = computed(() => {
-  if(!currentUser.value) return false;
+  if (!currentUser.value) return false;
   const isAdmin = currentUser.value.positions?.includes("Admin");
   const isProjectManager = currentUser.value.id === props.project.projectManagerId;
   return isAdmin || isProjectManager;
-})
+});
 const handleEdit = () => {
   router.push({
     name: "UpdateProject",
@@ -42,6 +42,14 @@ const formatDate = (dateString) => {
 };
 const randomNumber = () => {
   return Math.floor(Math.random() * 101);
+};
+const getStatusLabel = (status) => {
+  const statusMap = {
+    0: "Active",
+    1: "Pending",
+    2: "Completed",
+  };
+  return statusMap[Number(status)] || "Active";
 };
 const progressPercent = randomNumber();
 const tasksPercent = randomNumber();
@@ -142,9 +150,9 @@ const bugsPercent = randomNumber();
     </div>
     <!-- Footer -->
     <div class="card-footer">
-      <span class="status-badge" :class="project.isActive ? 'Active' : 'Pending'">{{
-        project.isActive ? "Active" : "Pending"
-      }}</span>
+      <span class="status-badge" :class="getStatusLabel(project.status)">
+        {{ getStatusLabel(project.status) }}
+      </span>
       <span class="timeline"
         >Timeline:
         <span class="time"

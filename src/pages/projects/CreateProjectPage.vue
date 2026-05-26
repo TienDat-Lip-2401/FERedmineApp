@@ -4,12 +4,14 @@ import { useRouter } from "vue-router";
 import BaseInput from "@/components/common/BaseInput.vue";
 import AddMemberModal from "@/components/project/AddMemberModal.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
+import BaseLoading from "@/components/common/BaseLoading.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
 import { useModalStore } from "@/stores/modalStore";
 import trashIcon from "@/assets/icons/trash.svg";
 const projectStore = useProjectStore();
 const router = useRouter();
 const isModalOpen = ref(false);
+const isLoading = ref(false);
 const modalStore = useModalStore();
 // Xử lý xác nhận xóa thành viên
 const isConfirmOpen = ref(false);
@@ -75,6 +77,7 @@ const onAddMembers = (selectedList) => {
 };
 const handleSave = async () => {
   try {
+    isLoading.value = true;
     // Đóng gói Payload chuẩn theo DTO của Backend C#
     const projectPayload = {
       projectCode: form.value.projectCode,
@@ -107,6 +110,8 @@ const handleSave = async () => {
       message: errorMessage,
       type: "error", // Đổi type thành error để UI hiển thị màu đỏ/cảnh báo
     });
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
@@ -206,6 +211,7 @@ const handleSave = async () => {
       @add="onAddMembers"
     />
     <ConfirmModal :isOpen="isConfirmOpen" @close="isConfirmOpen = false" @confirm="confirmDelete" />
+    <BaseLoading :isLoading="isLoading" text="Đang xử lý...." />
   </div>
 </template>
 

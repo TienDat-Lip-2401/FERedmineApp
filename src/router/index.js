@@ -15,8 +15,8 @@ import CreateProjectPage from "@/pages/projects/CreateProjectPage.vue";
 import ProjectsPage from "@/pages/projects/ProjectsPage.vue";
 import CreateUserPage from "@/pages/user/CreateUserPage.vue";
 import ProfilePage from "@/pages/user/ProfilePage.vue";
-import RegisterPage from "@/pages/auth/RegisterPage.vue";
 import UpdateProjectPage from "@/pages/projects/UpdateProjectPage.vue";
+import UpdateUserPage from "@/pages/user/UpdateUserPage.vue";
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -76,6 +76,11 @@ const router = createRouter({
           component: ProfilePage,
         },
         {
+          path: "users/update/:id",
+          name: "UpdateUser",
+          component: UpdateUserPage,
+        },
+        {
           path: "work-logs",
           name: "WorkLogs",
           component: WorkLogsPage,
@@ -106,11 +111,6 @@ const router = createRouter({
           path: "reset-password",
           name: "ResetPassword",
           component: ResetPassword,
-        },
-        {
-          path: "register",
-          name: "Register",
-          component: RegisterPage,
         },
       ],
     },

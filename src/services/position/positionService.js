@@ -7,10 +7,12 @@ export const positionService = {
   },
 
   // GET: api/Position
-  getAll: () => {
+  getAllByCurrentUser: () => {
     return http.get("/position");
   },
-
+  getAllPosition: () => {
+    return http.get("/position/all");
+  },
   // GET: api/Position/available/{userId}
   getAvailable: (userId) => {
     return http.get(`/position/available/${userId}`);
@@ -25,9 +27,11 @@ export const positionService = {
   // DELETE: api/Position/remove-position
   // DTO: DeletePositionRequest { userId, positionId }
   removePosition: (payload) => {
-    // Truyền trực tiếp ID lên URL, bỏ hoàn toàn { data: payload } và headers
-    return http.delete(
-      `/position/remove-position?userId=${payload.userId}&positionId=${payload.positionId}`,
-    );
+    return http.delete("/position/remove-position", {
+      data: {
+        userId: payload.userId,
+        positionId: payload.positionId,
+      },
+    });
   },
 };

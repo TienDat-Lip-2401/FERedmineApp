@@ -6,6 +6,7 @@ export const useUserStore = defineStore("user", () => {
   const users = ref([]);
   const isLoading = ref(false);
   const error = ref(null);
+  const editingUser = ref(null);
   const fetchUsers = async () => {
     isLoading.value = true;
     error.value = null;
@@ -89,6 +90,24 @@ export const useUserStore = defineStore("user", () => {
       return { success: false, message: errorMsg };
     }
   };
+  const fetchUserDetail = async (id) => {
+    isLoading.value = true;
+    try {
+      // Bắn ID của thằng khác lên C#
+      const response = await userService.getById(id);
+      if (response.statusCode === 200) {
+        // C# trả về info thằng khác, lưu vào kho editingUser
+        editingUser.value = response.data;
+        return { success: true };
+      }
+      return { success: false };
+    } catch (err) {
+      console.error(err);
+      return { success: false };
+    } finally {
+      isLoading.value = false;
+    }
+  };
   return {
     users,
     isLoading,
@@ -99,5 +118,7 @@ export const useUserStore = defineStore("user", () => {
     updateUser,
     checkEmailExists,
     addUser,
+    fetchUserDetail,
+    editingUser
   };
 });

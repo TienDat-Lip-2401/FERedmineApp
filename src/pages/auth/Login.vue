@@ -5,6 +5,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { authService } from "@/services/auth";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
+import BaseLoading from "@/components/common/BaseLoading.vue";
 const router = useRouter();
 const authStore = useAuthStore();
 const formData = reactive({
@@ -133,12 +134,9 @@ const handleLogin = async () => {
         <router-link to="/auth/forgot-password" class="auth-link">
           Forgot your password
         </router-link>
-        <p class="register-prompt">
-          <span>Don't have an account? </span>
-          <router-link to="/auth/register" class="auth-link font-bold">Register here</router-link>
-        </p>
       </div>
     </form>
+    <BaseLoading :isLoading="isLoading" text="Đang xác thực..." />
   </div>
 </template>
 

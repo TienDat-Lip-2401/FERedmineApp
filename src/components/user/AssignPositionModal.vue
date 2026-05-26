@@ -3,20 +3,41 @@ import { ref, computed, watch } from "vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import { usePositionStore } from "@/stores/positionStore";
-
 // eslint-disable-next-line no-unused-vars
 const props = defineProps({
   isOpen: Boolean,
   userId: [Number, String],
+  currentPositions: {
+    type: Array,
+    default: () => [],
+  },
 });
 const emit = defineEmits(["close", "add"]);
 const positionStore = usePositionStore();
-// Data mẫu (Sau này Đạt có thể lấy từ Store hoặc API)
 const searchQuery = ref("");
 const selectedIds = ref([]);
+const availableList = ref([]);
 const loadAvailablePositions = async () => {
   if (props.userId) {
-    await positionStore.fetchAvailablePositions(props.userId);
+    try {
+      const res = await positionStore.fetchAvailablePositions(props.userId);
+      // Backend trả dữ liệu qua res.data
+      if (res && res.data) {
+        availableList.value = res.data;
+      }
+    } catch (error) {
+      console.error("Lỗi lấy danh sách chức vụ khả dụng:", error);
+    }
+  } else {
+    // Gọi hàm getAllPositions (đây là tên đúng bạn viết trong Store lúc nãy)
+    try {
+      const res = await positionStore.getAllPositions();
+      if (res && res.data) {
+        availableList.value = res.data;
+      }
+    } catch (error) {
+      console.error("Lỗi lấy tất cả chức vụ:", error);
+    }
   }
 };
 watch(
@@ -25,6 +46,7 @@ watch(
     if (newVal) {
       loadAvailablePositions();
       selectedIds.value = [];
+      searchQuery.value = "";
     }
   },
   {
@@ -35,7 +57,10 @@ watch(
 // Logic tìm kiếm real-time
 const filteredPositions = computed(() => {
   const key = searchQuery.value.toLowerCase().trim();
-  return positionStore.availablePositions.filter((p) => p.name.toLowerCase().includes(key));
+  const existingIds = props.currentPositions.map((p) => p.id);
+  return availableList.value.filter(
+    (p) => p.name.toLowerCase().includes(key) && !existingIds.includes(p.id),
+  );
 });
 
 const toggleSelect = (id) => {
@@ -47,27 +72,17 @@ const toggleSelect = (id) => {
   }
 };
 
-const handleApply = async () => {
+const handleApply = () => {
   if (selectedIds.value.length === 0) {
     alert("Please select at least one position.");
     return;
   }
-  try {
-    const result = await positionStore.assignPositions(props.userId, selectedIds.value);
-    if (result.statusCode === 200 || result.success) {
-      // Báo cho cha biết đã thêm thành công để cập nhật UI
-      emit("add");
-      emit("close");
-    }
-    // eslint-disable-next-line no-unused-vars
-  } catch (error) {
-    console.error("Lỗi chi tiết khiến nó nhảy vào catch:", error);
 
-    // Hiển thị lỗi từ Backend (nếu có) thay vì câu fix cứng
-    const errorMsg =
-      error.response?.data?.message || error.message || "Failed to assign positions.";
-    alert("Lỗi: " + errorMsg);
-  }
+  const selectedObjects = availableList.value.filter((p) => selectedIds.value.includes(p.id));
+
+  emit("add", selectedObjects);
+
+  emit("close");
 };
 </script>
 

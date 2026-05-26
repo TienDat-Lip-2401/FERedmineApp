@@ -4,18 +4,29 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/userStore";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BasePagination from "@/components/common/BasePagination.vue";
+import BaseLoading from "@/components/common/BaseLoading.vue";
+import { useModalStore } from "@/stores/modalStore";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import trashIcon from "@/assets/icons/trash.svg";
 import editIcon from "@/assets/icons/edit.svg";
 const router = useRouter();
 const userStore = useUserStore();
+const modalStore = useModalStore();
+const isLoading = ref(false);
+const loadingText = ref("Đang tải dữ liệu...");
 onMounted(async () => {
-  if (userStore.users.length === 0) {
+  try {
+    isLoading.value = true;
+    loadingText.value = "Đang tải danh sách...";
     await userStore.fetchUsers();
-    console.log("Fetched users:", userStore.users);
+  } catch (error) {
+    console.error("Lỗi khi tải User:", error);
+  } finally {
+    isLoading.value = false;
   }
 });
+
 // --- QUẢN LÝ TÌM KIẾM ---
 const searchQuery = ref("");
 const debouncedSearchQuery = ref("");
@@ -51,18 +62,26 @@ watch(searchField, () => {
 watch([debouncedSearchQuery, statusFilter, searchField], () => {
   currentPage.value = 1;
 });
+const handleEdit = (userId) => {
+  router.push(`/users/update/${userId}`);
+};
 const filteredUsers = computed(() => {
   const key = removeVietnameseTones(debouncedSearchQuery.value);
 
   return userStore.users.filter((user) => {
-    // Lọc theo trường đã chọn (Name/Email/Code)
+    // 1. Lọc theo trường tìm kiếm
     const fieldValue = searchField.value
       ? removeVietnameseTones(user[searchField.value] || "")
       : "";
     const matchSearch = searchField.value ? fieldValue.includes(key) : true;
 
-    // Lọc theo Status
-    const matchStatus = statusFilter.value ? user.status === statusFilter.value : true;
+    // 2. Lọc theo trạng thái (Xử lý chuyển đổi kiểu)
+    let matchStatus = true;
+    if (statusFilter.value === "Active") {
+      matchStatus = user.status === true;
+    } else if (statusFilter.value === "Inactive") {
+      matchStatus = user.status === false;
+    }
 
     return matchSearch && matchStatus;
   });
@@ -86,16 +105,39 @@ const triggerDelete = (id) => {
 // Xác nhận xóa
 const confirmDelete = async () => {
   if (!userIdToDelete.value) return;
-  const result = await userStore.deleteUser(userIdToDelete.value);
-  if (result.success) {
-    if (paginatedUsers.value.length === 0 && currentPage.value > 1) {
-      currentPage.value--;
-    }
-  } else {
-    alert(result.message);
-  }
+
+  // Đóng bảng hỏi xác nhận trước
   isConfirmOpen.value = false;
-  userIdToDelete.value = null;
+
+  try {
+    // Bật Loading và đổi chữ
+    isLoading.value = true;
+    loadingText.value = "Đang xóa người dùng...";
+
+    const result = await userStore.deleteUser(userIdToDelete.value);
+
+    if (result.success) {
+      if (paginatedUsers.value.length === 0 && currentPage.value > 1) {
+        currentPage.value--;
+      }
+    } else {
+      modalStore.showModal({
+        title: "Thất bại",
+        message: result.message,
+        type: "error",
+      });
+    }
+  } catch (error) {
+    const msg = error.message;
+    modalStore.showModal({
+      title: "Thất bại",
+      message: msg || "Có lỗi xảy ra khi xóa!",
+      type: "error",
+    });
+  } finally {
+    isLoading.value = false;
+    userIdToDelete.value = null;
+  }
 };
 </script>
 
@@ -159,7 +201,7 @@ const confirmDelete = async () => {
               </span>
             </td>
             <td class="action-btns">
-              <button class="btn-icon edit">
+              <button class="btn-icon edit" @click="handleEdit(user.id)">
                 <img :src="editIcon" alt="Edit" />
               </button>
               <button class="btn-icon delete" @click="triggerDelete(user.id)">
@@ -182,6 +224,7 @@ const confirmDelete = async () => {
     />
 
     <ConfirmModal :isOpen="isConfirmOpen" @close="isConfirmOpen = false" @confirm="confirmDelete" />
+    <BaseLoading :isLoading="isLoading" :text="loadingText" />
   </div>
 </template>
 

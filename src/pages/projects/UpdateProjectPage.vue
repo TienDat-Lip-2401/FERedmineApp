@@ -104,7 +104,8 @@ onMounted(async () => {
       console.log("Project Detail", projectDetail);
       if (projectDetail) {
         form.value.id = projectDetail.id;
-        form.value.title = projectDetail.title;
+        ((form.value.projectCode = projectDetail.projectCode),
+          (form.value.title = projectDetail.title));
         form.value.startDate = formatDateForInput(projectDetail.startDate);
         form.value.endDate = formatDateForInput(projectDetail.endDate);
         form.value.description = projectDetail.description;
@@ -112,6 +113,7 @@ onMounted(async () => {
         form.value.members = projectDetail.members;
         form.value.isActive = projectDetail.isActive;
         form.value.status = projectDetail.status;
+        form.value.isPublic = projectDetail.isPublic;
       }
     } catch (error) {
       console.error("Lỗi khi load dữ liệu dự án:", error);
