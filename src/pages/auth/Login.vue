@@ -63,9 +63,10 @@ const handleLogin = async () => {
       password: formData.password,
     });
     console.log("Login successful:", response.data);
-    const { access_token, refresh_token, user_id, name, positions, isFirstLogin } = response.data;
-    authStore.setAuthData(access_token, refresh_token, {
+    const { user_id, email, name, positions, isFirstLogin } = response.data;
+    authStore.setAuthData({
       id: user_id,
+      email: email,
       name: name,
       positions: positions,
       isFirstLogin: isFirstLogin,

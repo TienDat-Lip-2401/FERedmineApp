@@ -5,8 +5,8 @@ import { useAuthStore } from "@/stores/authStore";
 import BaseMenu from "../common/BaseMenu.vue";
 const authStore = useAuthStore();
 const router = useRouter();
-const handleLogout = () => {
-  authStore.logout();
+const handleLogout = async () => {
+  await authStore.logout();
   router.push({ name: "Login" });
 };
 const goToProfile = () => {

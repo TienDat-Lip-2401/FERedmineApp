@@ -118,10 +118,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from) => {
-  // 1. Kiểm tra trạng thái đăng nhập từ localStorage
-  const isAuthenticated = !!localStorage.getItem("refresh_token");
+  // 1. SỬA Ở ĐÂY: Kiểm tra xem có thông tin user không (thay vì kiểm tra token)
+  const isAuthenticated = !!localStorage.getItem("user");
 
-  // 2. Kiểm tra các thuộc tính meta của Route hiện tại (bao gồm cả các Route cha)
+  // 2. Kiểm tra các thuộc tính meta của Route hiện tại
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const isGuestOnly = to.matched.some((record) => record.meta.guestOnly);
 

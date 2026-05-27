@@ -4,18 +4,8 @@ import { ref } from "vue";
 export const useAuthStore = defineStore("auth", () => {
   const savedUser = localStorage.getItem("user");
   const user = ref(savedUser ? JSON.parse(savedUser) : null);
-  const accessToken = ref(localStorage.getItem("access_token") || null);
-  const refreshToken = ref(localStorage.getItem("refresh_token") || null);
-  const setAccessToken = (token) => {
-    accessToken.value = token;
-    localStorage.setItem("access_token", token);
-  };
-  const setAuthData = (token, rfToken, userData) => {
-    accessToken.value = token;
+  const setAuthData = (userData) => {
     user.value = userData;
-    refreshToken.value = rfToken;
-    localStorage.setItem("access_token", token);
-    localStorage.setItem("refresh_token", rfToken);
     localStorage.setItem("user", JSON.stringify(userData));
   };
   const setUser = (userData) => {
@@ -23,13 +13,17 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  const logout = () => {
-    accessToken.value = null;
-    user.value = null;
-    refreshToken.value = null;
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user");
+  const logout = async () => {
+    try {
+      // 1. Báo backend xóa Cookie và hủy phiên
+      await authService.logout();
+    } catch (error) {
+      console.error("Lỗi khi đăng xuất backend:", error);
+    } finally {
+      // 2. Dọn dẹp Frontend (dù API có lỗi hay không thì vẫn ép out)
+      user.value = null;
+      localStorage.removeItem("user");
+    }
   };
   const register = async (userData) => {
     try {
@@ -54,16 +48,23 @@ export const useAuthStore = defineStore("auth", () => {
       throw error;
     }
   };
+  const refreshToken = async () => {
+    try {
+      const response = await authService.refreshToken();
+      return response;
+    } catch (error) {
+      await logout();
+      throw error;
+    }
+  };
   return {
-    accessToken,
     user,
-    refreshToken,
-    setAccessToken,
     setAuthData,
     setUser,
     logout,
     register,
     resetPassword,
     clearFirstLoginFlag,
+    refreshToken,
   };
 });

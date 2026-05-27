@@ -10,6 +10,9 @@ export const authService = {
     return http.post("/auth/register", data);
   },
   resetMyPassword: (data) => {
-    return http.post("/auth/reset-my-password", data); 
+    return http.post("/auth/reset-my-password", data);
+  },
+  refreshToken: (data) => {
+    return http.post("/auth/refresh-token");
   },
 };
