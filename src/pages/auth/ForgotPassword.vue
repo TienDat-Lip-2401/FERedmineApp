@@ -1,57 +1,70 @@
 <script setup>
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import { useModalStore } from "@/stores/modalStore";
 import { useUserStore } from "@/stores/userStore";
+
+const { t } = useI18n();
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const modalStore = useModalStore();
 const userStore = useUserStore();
+
 const email = ref("");
 const emailError = ref("");
 const isSubmitting = ref(false);
+
 const handleSend = async () => {
   emailError.value = "";
   if (!email.value) {
-    emailError.value = "Vui lòng nhập địa chỉ email.";
+    emailError.value = t("auth.forgot.err_empty");
     return;
   }
   if (!emailRegex.test(email.value)) {
-    emailError.value = "Định dạng email không hợp lệ.";
+    emailError.value = t("auth.forgot.err_invalid");
     return;
   }
+
   isSubmitting.value = true;
   try {
     await userStore.checkEmailExists(email.value);
     modalStore.showModal({
-      title: "Thành công",
-      message:
-        "Một đường dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư email của bạn!",
+      title: t("auth.forgot.success_title"),
+      message: t("auth.forgot.success_msg"),
       type: "success",
     });
   } catch (error) {
-    const errorMsg = error.response?.data?.message || "Lỗi máy chủ. Vui lòng thử lại sau.";
-    emailError.value = errorMsg;
+    emailError.value = error.response?.data?.message || t("auth.forgot.err_server");
   } finally {
     isSubmitting.value = false;
     email.value = "";
-    // Xong việc thì nhả nút ra
   }
 };
 </script>
 
 <template>
   <div class="auth-wrapper">
-    <h1 class="auth-title">Forgot Password</h1>
+    <h1 class="auth-title">{{ t("auth.forgot.title") }}</h1>
     <form @submit.prevent="handleSend" novalidate>
-      <BaseInput label="Email address" id="email" v-model="email" type="email" required />
+      <BaseInput
+        :label="t('auth.forgot.email_label')"
+        id="email"
+        v-model="email"
+        type="email"
+        required
+      />
+
       <Transition name="slide-fade">
         <span v-if="emailError" class="error-text">{{ emailError }}</span>
       </Transition>
-      <BaseButton text="Send" type="submit" class="btn-auth" />
+
+      <BaseButton :text="t('auth.forgot.send_btn')" type="submit" class="btn-auth" />
 
       <div class="auth-footer">
-        <router-link to="/auth/login" class="auth-link"> Back to Login </router-link>
+        <router-link to="/auth/login" class="auth-link">
+          {{ t("auth.forgot.back_link") }}
+        </router-link>
       </div>
     </form>
   </div>

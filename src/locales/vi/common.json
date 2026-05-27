@@ -1,0 +1,47 @@
+{
+  "common": {
+    "cancel": "Hủy bỏ",
+    "save": "Lưu lại",
+    "delete": "Xóa",
+    "edit": "Chỉnh sửa",
+    "create": "Tạo mới",
+    "update": "Cập nhật",
+    "search": "Tìm kiếm",
+    "action": "Hành động",
+    "role": "Vai trò",
+    "no": "STT",
+    "show": "Hiện",
+    "hide": "Ẩn",
+    "progress": "Tiến độ",
+    "tasks": "Nhiệm vụ",
+    "bugs": "Lỗi (Bugs)",
+    "timeline": "Thời gian",
+    "gender": {
+      "male": "Nam",
+      "female": "Nữ",
+      "other": "Khác"
+    },
+    "status": {
+      "active": "Hoạt động",
+      "pending": "Chờ xử lý",
+      "completed": "Hoàn thành",
+      "inactive": "Ngưng hoạt động"
+    },
+    "public": "Công khai",
+    "loading": "Đang xử lý...",
+    "confirm_delete_msg": "Bạn có chắc chắn muốn xóa không?",
+    "alert": {
+      "success": "Thành công",
+      "failed": "Thất bại",
+      "missing_info": "Thiếu thông tin",
+      "invalid_data": "Lỗi dữ liệu",
+      "missing_position": "Thiếu chức vụ"
+    },
+    "header": {
+      "not_logged_in": "Chưa đăng nhập",
+      "edit_profile": "Sửa thông tin",
+      "change_password": "Đổi mật khẩu",
+      "logout": "Đăng xuất"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "projects": {
+    "title": "Projects",
+    "create_title": "Create Project",
+    "edit_title": "Edit Project",
+    "project_code": "Project Code",
+    "project_title": "Title",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "description": "Description",
+    "manager": "Manager",
+    "members": "Members",
+    "add_member": "Add member",
+    "code_placeholder": "Enter project code...",
+    "title_placeholder": "Enter project title...",
+    "manager_placeholder": "Select manager...",
+    "confirm_delete_project": "Are you sure you want to delete this project?",
+    "delete_success": "Project deleted successfully!",
+    "delete_failed": "Failed to delete project. Please try again!",
+    "create_failed": "An error occurred while creating project. Please try again!",
+    "edit_success": "Project updated successfully!"
+  }
+}

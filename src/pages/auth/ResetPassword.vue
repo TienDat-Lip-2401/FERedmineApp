@@ -1,10 +1,12 @@
 <script setup>
 import { reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import { useRouter } from "vue-router";
 import { useModalStore } from "@/stores/modalStore";
 import { useAuthStore } from "@/stores/authStore";
+const { t } = useI18n();
 const router = useRouter();
 const modalStore = useModalStore();
 const authStore = useAuthStore();
@@ -24,18 +26,18 @@ const handleReset = async () => {
   formError.password = "";
   formError.confirmPassword = "";
   if (!formData.password) {
-    formError.password = "Vui lòng nhập mật khẩu mới.";
+    formError.password = t("auth.reset.err_required");
     return;
   } else if (!passwordRegex.test(formData.password)) {
-    formError.password = "Mật khẩu phải từ 8 ký tự, gồm số, chữ hoa và ký tự đặc biệt.";
+    formError.password = t("auth.reset.err_invalid_format");
     return;
   }
   if (!formData.confirmPassword) {
-    formError.confirmPassword = "Vui lòng xác nhận lại mật khẩu.";
+    formError.confirmPassword = t("auth.reset.err_confirm_required");
     return;
   } else if (formData.password !== formData.confirmPassword) {
     // Nếu có nhập nhưng bị lệch với ô trên
-    formError.confirmPassword = "Mật khẩu xác nhận không khớp, vui lòng kiểm tra lại!";
+    formError.confirmPassword = t("auth.reset.err_mismatch");
     return;
   }
   try {
@@ -46,8 +48,8 @@ const handleReset = async () => {
       newPassword: formData.password,
     });
     modalStore.showModal({
-      title: "Thành công",
-      message: "Chúc mừng! Bạn đã đổi mật khẩu thành công.",
+      title: t("auth.reset.success_title"),
+      message: t("auth.reset.success_msg"),
       type: "success",
     });
     formData.password = "";
@@ -56,8 +58,7 @@ const handleReset = async () => {
     // 3. Đẩy về trang chủ
     router.push("/");
   } catch (error) {
-    formError.password =
-      error.response?.data?.message || "Đổi mật khẩu thất bại, vui lòng thử lại!";
+    formError.password = error.response?.data?.message || t("auth.reset.err_failed");
   } finally {
     isLoading.value = false;
   }
@@ -72,12 +73,12 @@ const toggleConfirmPassword = () => {
 
 <template>
   <div class="auth-wrapper">
-    <h1 class="auth-title">Reset Password</h1>
+    <h1 class="auth-title">{{ t("auth.reset.title") }}</h1>
 
     <form @submit.prevent="handleReset" novalidate>
       <div class="form-group form-group-password">
         <BaseInput
-          label="New Password"
+          :label="t('auth.reset.new_password')"
           id="password"
           v-model="formData.password"
           :type="isPasswordHidden ? 'password' : 'text'"
@@ -85,7 +86,7 @@ const toggleConfirmPassword = () => {
         >
         </BaseInput>
         <button type="button" class="btn btn-link toggle-password" @click="togglePassword">
-          {{ isPasswordHidden ? "Show" : "Hide" }}
+          {{ isPasswordHidden ? t("auth.common.show") : t("auth.common.hide") }}
         </button>
         <Transition name="slide-fade">
           <span v-if="formError.password" class="error-text">{{ formError.password }}</span>
@@ -94,19 +95,18 @@ const toggleConfirmPassword = () => {
 
       <div class="form-group form-group-confirm-password">
         <BaseInput
-          label="Confirm Password"
+          :label="t('auth.reset.confirm_password')"
           id="confirmPassword"
           v-model="formData.confirmPassword"
           :type="isConfirmPasswordHidden ? 'password' : 'text'"
           required
-        >
-        </BaseInput>
+        />
         <button
           type="button"
           class="btn btn-link toggle-confirm-password"
           @click="toggleConfirmPassword"
         >
-          {{ isConfirmPasswordHidden ? "Show" : "Hide" }}
+          {{ isConfirmPasswordHidden ? t("auth.common.show") : t("auth.common.hide") }}
         </button>
         <Transition name="slide-fade">
           <span v-if="formError.confirmPassword" class="error-text">{{
@@ -115,10 +115,12 @@ const toggleConfirmPassword = () => {
         </Transition>
       </div>
 
-      <BaseButton text="Save" type="submit" variant="auth" />
+      <BaseButton :text="t('auth.reset.save_btn')" type="submit" variant="auth" />
 
       <div class="auth-footer">
-        <router-link to="/auth/login" class="auth-link"> Back to Login </router-link>
+        <router-link to="/auth/login" class="auth-link"
+          >{{ t("auth.reset.back_link") }}
+        </router-link>
       </div>
     </form>
   </div>

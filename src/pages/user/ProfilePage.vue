@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/stores/userStore";
 import { usePositionStore } from "@/stores/positionStore";
 import BaseInput from "@/components/common/BaseInput.vue";
@@ -10,6 +11,8 @@ import BaseLoading from "@/components/common/BaseLoading.vue";
 import trashIcon from "@/assets/icons/trash.svg";
 import AssignPositionModal from "@/components/user/AssignPositionModal.vue";
 import { useModalStore } from "@/stores/modalStore";
+
+const { t } = useI18n();
 const router = useRouter();
 const userStore = useUserStore();
 const positionStore = usePositionStore();
@@ -104,7 +107,7 @@ const triggerDeletePosition = (index) => {
 const confirmDeletePosition = async () => {
   const userId = currentUserId.value;
   if (!userId) {
-    alert("Không tìm thấy thông tin đăng nhập. Vui lòng đăng nhập lại!");
+    alert(t("users.fetch_detail_error"));
     isConfirmOpen.value = false;
     return;
   }
@@ -115,21 +118,21 @@ const confirmDeletePosition = async () => {
       if (res.statusCode === 200) {
         positions.value = positions.value.filter((p) => p.id !== positionIndexToDelete.value);
         modalStore.showModal({
-          title: "Thành công",
-          message: "Xóa chức vụ khỏi người dùng thành công!",
+          title: t("common.alert.success"),
+          message: t("users.update_success"),
           type: "success",
         });
       } else {
         modalStore.showModal({
-          title: "Thất bại",
-          message: "Xóa chức vụ thất bại!",
+          title: t("common.alert.failed"),
+          message: t("users.update_failed"),
           type: "error",
         });
       }
     } catch (error) {
       modalStore.showModal({
-        title: "Thất bại",
-        message: error.message,
+        title: t("common.alert.failed"),
+        message: error.message || t("users.update_failed"),
         type: "error",
       });
     } finally {
@@ -164,18 +167,18 @@ const handleSave = async () => {
     const response = await userStore.updateUser(userId, updatedData);
     if (response.statusCode === 200 || response.success) {
       modalStore.showModal({
-        title: "Thành công",
-        message: "Cập nhật thông tin thành công!",
+        title: t("common.alert.success"),
+        message: t("users.update_success"),
         type: "success",
       });
       await userStore.fetchUsers();
       router.push("/users");
     } else {
-      alert(response.message || "Cập nhật thất bại!");
+      alert(response.message || t("users.update_failed"));
     }
   } catch (error) {
     console.error("Lỗi khi lưu thông tin user:", error);
-    const errorMsg = error.response?.data?.message || "Đã xảy ra lỗi hệ thống";
+    const errorMsg = error.response?.data?.message || t("users.update_failed");
     alert(errorMsg);
   } finally {
     isLoading.value = false;
@@ -185,56 +188,56 @@ const handleSave = async () => {
 
 <template>
   <div class="create-user-container">
-    <h2 class="page-title">Edit Profile</h2>
+    <h2 class="page-title">{{ $t("users.edit_profile") }}</h2>
 
     <div class="form-card">
-      <BaseInput label="Code" v-model="form.code" required placeholder="Enter user code..." />
+      <BaseInput :label="$t('users.code')" v-model="form.code" required :placeholder="$t('users.code_placeholder')" />
 
-      <BaseInput label="Name" v-model="form.name" required placeholder="Enter full name..." />
+      <BaseInput :label="$t('users.name')" v-model="form.name" required :placeholder="$t('users.name_placeholder')" />
 
       <BaseInput
-        label="Email"
+        :label="$t('users.email')"
         v-model="form.email"
         type="email"
         required
-        placeholder="Enter email address..."
+        :placeholder="$t('users.email_placeholder')"
       />
 
       <BaseInput
-        label="Phone number"
+        :label="$t('users.phone')"
         v-model="form.phoneNumber"
-        placeholder="Enter phone number..."
+        :placeholder="$t('users.phone_placeholder')"
       />
 
       <div class="input-grid">
         <div class="field-container">
-          <label class="field-label">Gender</label>
+          <label class="field-label">{{ $t("users.gender") }}</label>
           <select v-model="form.gender" class="custom-select">
-            <option value="0">Male</option>
-            <option value="1">Female</option>
-            <option value="2">Other</option>
+            <option value="0">{{ $t("common.gender.male") }}</option>
+            <option value="1">{{ $t("common.gender.female") }}</option>
+            <option value="2">{{ $t("common.gender.other") }}</option>
           </select>
         </div>
-        <BaseInput label="Birthday" v-model="form.birthday" type="date" />
+        <BaseInput :label="$t('users.birthday')" v-model="form.birthday" type="date" />
       </div>
 
       <div class="input-grid">
-        <BaseInput label="Joined Date" v-model="form.joinedDate" type="date" />
-        <BaseInput label="Leaved Date" v-model="form.leavedDate" type="date" />
+        <BaseInput :label="$t('users.join_date')" v-model="form.joinedDate" type="date" />
+        <BaseInput :label="$t('users.leave_date')" v-model="form.leavedDate" type="date" />
       </div>
 
       <div class="positions-section">
         <div class="section-header">
-          <label class="field-label">Position</label>
-          <button class="btn-assign" @click="isAssignModalOpen = true">+ Assign Position</button>
+          <label class="field-label">{{ $t("users.position") }}</label>
+          <button class="btn-assign" @click="isAssignModalOpen = true">+ {{ $t("users.assign_position") }}</button>
         </div>
 
         <table class="positions-table">
           <thead>
             <tr>
-              <th width="10%">No</th>
-              <th width="70%">Name</th>
-              <th width="20%" class="text-center">Action</th>
+              <th width="10%">{{ $t("common.no") }}</th>
+              <th width="70%">{{ $t("users.name") }}</th>
+              <th width="20%" class="text-center">{{ $t("common.action") }}</th>
             </tr>
           </thead>
           <tbody>
@@ -252,13 +255,13 @@ const handleSave = async () => {
       </div>
 
       <div class="status-switch">
-        <span class="field-label">Active</span>
+        <span class="field-label">{{ $t("common.status.active") }}</span>
         <input type="checkbox" v-model="form.isActive" class="switch" />
       </div>
 
       <div class="form-actions">
-        <BaseButton variant="outline" @click="router.back()">Cancle</BaseButton>
-        <BaseButton variant="danger" @click="handleSave">Save</BaseButton>
+        <BaseButton variant="outline" @click="router.back()">{{ $t("common.cancel") }}</BaseButton>
+        <BaseButton variant="danger" @click="handleSave">{{ $t("common.save") }}</BaseButton>
       </div>
     </div>
 
@@ -274,7 +277,7 @@ const handleSave = async () => {
       @close="isAssignModalOpen = false"
       @add="onAddPositions"
     />
-    <BaseLoading :isLoading="isLoading" />
+    <BaseLoading :isLoading="isLoading" :text="$t('common.loading')" />
   </div>
 </template>
 

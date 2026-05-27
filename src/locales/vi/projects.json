@@ -1,0 +1,23 @@
+{
+  "projects": {
+    "title": "Dự án",
+    "create_title": "Tạo dự án",
+    "edit_title": "Sửa dự án",
+    "project_code": "Mã dự án",
+    "project_title": "Tên dự án",
+    "start_date": "Ngày bắt đầu",
+    "end_date": "Ngày kết thúc",
+    "description": "Mô tả",
+    "manager": "Quản lý",
+    "members": "Thành viên",
+    "add_member": "Thêm thành viên",
+    "code_placeholder": "Nhập mã dự án...",
+    "title_placeholder": "Nhập tên dự án...",
+    "manager_placeholder": "Chọn quản lý...",
+    "confirm_delete_project": "Bạn có chắc chắn muốn xóa dự án này không?",
+    "delete_success": "Đã xóa dự án thành công!",
+    "delete_failed": "Xóa dự án thất bại. Vui lòng thử lại!",
+    "create_failed": "Đã xảy ra lỗi khi tạo dự án. Vui lòng thử lại!",
+    "edit_success": "Cập nhật dự án thành công!"
+  }
+}

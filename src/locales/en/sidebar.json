@@ -1,0 +1,11 @@
+{
+  "sidebar": {
+    "projects": "Projects",
+    "tasks": "Tasks",
+    "work_logs": "Work Logs",
+    "performance": "Performance",
+    "users": "Users",
+    "positions": "Positions",
+    "roles": "Roles"
+  }
+}

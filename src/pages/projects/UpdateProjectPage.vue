@@ -1,11 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import BaseInput from "@/components/common/BaseInput.vue";
 import AddMemberModal from "@/components/project/AddMemberModal.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
 import trashIcon from "@/assets/icons/trash.svg";
+
+const { t } = useI18n();
 const projectStore = useProjectStore();
 const route = useRoute();
 const router = useRouter();
@@ -124,25 +127,25 @@ onMounted(async () => {
 
 <template>
   <div class="create-project-container">
-    <h2 class="page-title">Edit Project</h2>
+    <h2 class="page-title">{{ $t("projects.edit_title") }}</h2>
     <div class="form-card">
-      <BaseInput label="ID" v-model="form.id" required placeholder="Nhập mã dự án..." />
-      <BaseInput label="Title" v-model="form.title" required placeholder="Nhập tên dự án..." />
+      <BaseInput :label="$t('projects.project_code')" v-model="form.id" required :placeholder="$t('projects.code_placeholder')" disabled />
+      <BaseInput :label="$t('projects.project_title')" v-model="form.title" required :placeholder="$t('projects.title_placeholder')" />
 
       <div class="input-group">
-        <BaseInput type="date" label="Start date" v-model="form.startDate" />
-        <BaseInput type="date" label="End date" v-model="form.endDate" />
+        <BaseInput type="date" :label="$t('projects.start_date')" v-model="form.startDate" />
+        <BaseInput type="date" :label="$t('projects.end_date')" v-model="form.endDate" />
       </div>
 
       <div class="field-container">
-        <label class="field-label">Description</label>
+        <label class="field-label">{{ $t("projects.description") }}</label>
         <textarea v-model="form.description" class="field-textarea" rows="4"></textarea>
       </div>
 
       <div class="field-container">
-        <label class="field-label">Manager</label>
+        <label class="field-label">{{ $t("projects.manager") }}</label>
         <select v-model="form.pmId" class="field-select">
-          <option value="">Chọn quản lý...</option>
+          <option value="">{{ $t("projects.manager_placeholder") }}</option>
           <option value="13">PM-01</option>
           <option value="14">PM-02</option>
           <option value="15">PM-03</option>
@@ -151,17 +154,17 @@ onMounted(async () => {
       </div>
       <div class="members-section">
         <div class="section-header">
-          <label class="field-label">Members</label>
-          <button class="btn-add-member" @click="isModalOpen = true">+ Add member</button>
+          <label class="field-label">{{ $t("projects.members") }}</label>
+          <button class="btn-add-member" @click="isModalOpen = true">+ {{ $t("projects.add_member") }}</button>
         </div>
 
         <table class="members-table">
           <thead>
             <tr>
-              <th>No</th>
-              <th>Name</th>
-              <th>Role</th>
-              <th class="text-center">Action</th>
+              <th>{{ $t("common.no") }}</th>
+              <th>{{ $t("users.name") }}</th>
+              <th>{{ $t("common.role") }}</th>
+              <th class="text-center">{{ $t("common.action") }}</th>
             </tr>
           </thead>
           <tbody>
@@ -180,28 +183,28 @@ onMounted(async () => {
       </div>
       <div class="form-footer-options">
         <div class="status-group">
-          <label class="field-label">Status</label>
+          <label class="field-label">{{ $t("users.status") }}</label>
           <div class="radio-options">
-            <label><input type="radio" v-model="form.status" :value="0" /> Active</label>
-            <label><input type="radio" v-model="form.status" :value="1" /> Pending</label>
-            <label><input type="radio" v-model="form.status" :value="2" /> Completed</label>
+            <label><input type="radio" v-model="form.status" :value="0" /> {{ $t("common.status.active") }}</label>
+            <label><input type="radio" v-model="form.status" :value="1" /> {{ $t("common.status.pending") }}</label>
+            <label><input type="radio" v-model="form.status" :value="2" /> {{ $t("common.status.completed") }}</label>
           </div>
         </div>
 
         <div class="toggle-group">
           <div class="toggle-item">
-            <span>Public</span>
+            <span>{{ $t("common.public") }}</span>
             <input type="checkbox" v-model="form.isPublic" class="switch" />
           </div>
           <div class="toggle-item">
-            <span>Active</span>
+            <span>{{ $t("common.status.active") }}</span>
             <input type="checkbox" v-model="form.isActive" class="switch" />
           </div>
         </div>
       </div>
       <div class="form-actions">
-        <button class="btn-cancel" @click="router.push('/projects')">Cancel</button>
-        <button class="btn-save" @click="handleSave">Save</button>
+        <button class="btn-cancel" @click="router.push('/projects')">{{ $t("common.cancel") }}</button>
+        <button class="btn-save" @click="handleSave">{{ $t("common.save") }}</button>
       </div>
     </div>
     <AddMemberModal

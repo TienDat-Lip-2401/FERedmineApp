@@ -7,13 +7,13 @@ import IconUsers from "@/assets/icons/Setting.svg";
 import IconPositions from "@/assets/icons/Setting.svg";
 import IconRoles from "@/assets/icons/Setting.svg";
 const menuItems = [
-  { name: "Projects", icon: IconProject, path: "/projects" },
-  { name: "Tasks", icon: IconTasks, path: "/tasks" },
-  { name: "Work Logs", icon: IconWorkLogs, path: "/work-logs" },
-  { name: "Performance", icon: IconPerformance, path: "/performance" },
-  { name: "Users", icon: IconUsers, path: "/users" },
-  { name: "Positions", icon: IconPositions, path: "/positions" },
-  { name: "Roles", icon: IconRoles, path: "/roles" },
+  { key: "projects", name: "Projects", icon: IconProject, path: "/projects" },
+  { key: "tasks", name: "Tasks", icon: IconTasks, path: "/tasks" },
+  { key: "work_logs", name: "Work Logs", icon: IconWorkLogs, path: "/work-logs" },
+  { key: "performance", name: "Performance", icon: IconPerformance, path: "/performance" },
+  { key: "users", name: "Users", icon: IconUsers, path: "/users" },
+  { key: "positions", name: "Positions", icon: IconPositions, path: "/positions" },
+  { key: "roles", name: "Roles", icon: IconRoles, path: "/roles" },
 ];
 
 </script>
@@ -24,7 +24,7 @@ const menuItems = [
       <RouterLink
         class=""
         v-for="item in menuItems"
-        :key="item.name"
+        :key="item.key"
         :class="['nav-item']"
         :to="item.path"
         
@@ -33,7 +33,7 @@ const menuItems = [
         <span class="nav-icon">
           <img :src="item.icon" alt="Icon" class="icon" />
         </span>
-        <span class="nav-text">{{ item.name }}</span>
+        <span class="nav-text">{{ $t('sidebar.' + item.key) }}</span>
       </RouterLink>
     </nav>
   </aside>

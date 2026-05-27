@@ -1,4 +1,7 @@
 <script setup>
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 import { reactive, ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/authStore";
@@ -47,11 +50,11 @@ const handleLogin = async () => {
   apiErrors.general = "";
 
   if (!formData.email.trim()) {
-    apiErrors.email = "Vui lòng nhập email";
+    apiErrors.email = t("auth.validation.err_email_required");
   }
 
   if (!formData.password.trim()) {
-    apiErrors.password = "Vui lòng nhập mật khẩu";
+    apiErrors.password = t("auth.validation.err_password_required");
   }
   if (apiErrors.email || apiErrors.password) {
     return;
@@ -78,7 +81,7 @@ const handleLogin = async () => {
       router.push("/");
     }
   } catch (error) {
-    const errorMsg = error.response?.data?.message || "Đăng nhập không thành công";
+    const errorMsg = error.response?.data?.message || t("auth.validation.err_login_failed");
 
     // Gán vào lỗi chung để hiển thị tập trung
     apiErrors.general = errorMsg;
@@ -90,11 +93,11 @@ const handleLogin = async () => {
 
 <template>
   <div class="login-wrapper">
-    <h1 class="auth-title">Login</h1>
+    <h1 class="auth-title">{{ $t("auth.login.title") }}</h1>
     <form action="" @submit.prevent="handleLogin" novalidate>
       <div class="form-group">
         <BaseInput
-          label="Email"
+          :label="$t('auth.login.email')"
           id="email"
           v-model="formData.email"
           type="email"
@@ -104,7 +107,7 @@ const handleLogin = async () => {
       </div>
       <div class="form-group form-group-password">
         <BaseInput
-          label="Password"
+          :label="$t('auth.login.password')"
           id="password"
           v-model="formData.password"
           :type="isPasswordHidden ? 'password' : 'text'"
@@ -112,13 +115,13 @@ const handleLogin = async () => {
           required
         />
         <button type="button" class="btn btn-link toggle-password" @click="togglePassword">
-          {{ isPasswordHidden ? "Show" : "Hide" }}
+          {{ isPasswordHidden ? $t("auth.common.show") : $t("auth.common.hide") }}
         </button>
       </div>
       <div class="auth-extra">
         <label class="remember-me">
           <input v-model="formData.rememberMe" type="checkbox" />
-          Remember me
+          {{ $t("auth.login.remember") }}
         </label>
       </div>
       <div v-if="apiErrors.email" class="error-box">
@@ -130,14 +133,14 @@ const handleLogin = async () => {
       <div v-else-if="apiErrors.general" class="error-box">
         {{ apiErrors.general }}
       </div>
-      <BaseButton text="Login" type="submit" variant="auth" />
+      <BaseButton :text="$t('auth.login.btn')" type="submit" variant="auth" />
       <div class="auth-footer">
         <router-link to="/auth/forgot-password" class="auth-link">
-          Forgot your password
+          {{ $t("auth.login.forgot_link") }}
         </router-link>
       </div>
     </form>
-    <BaseLoading :isLoading="isLoading" text="Đang xác thực..." />
+    <BaseLoading :isLoading="isLoading" :text="$t('auth.common.loading')" />
   </div>
 </template>
 

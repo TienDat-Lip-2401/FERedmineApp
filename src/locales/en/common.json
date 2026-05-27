@@ -1,0 +1,47 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "action": "Action",
+    "role": "Role",
+    "no": "No",
+    "show": "Show",
+    "hide": "Hide",
+    "progress": "Progress",
+    "tasks": "Tasks",
+    "bugs": "Bugs",
+    "timeline": "Timeline",
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "status": {
+      "active": "Active",
+      "pending": "Pending",
+      "completed": "Completed",
+      "inactive": "Inactive"
+    },
+    "public": "Public",
+    "loading": "Processing...",
+    "confirm_delete_msg": "Are you sure you want to delete it?",
+    "alert": {
+      "success": "Success",
+      "failed": "Failed",
+      "missing_info": "Missing Information",
+      "invalid_data": "Invalid Data",
+      "missing_position": "Missing Position"
+    },
+    "header": {
+      "not_logged_in": "Not logged in",
+      "edit_profile": "Edit Profile",
+      "change_password": "Change Password",
+      "logout": "Logout"
+    }
+  }
+}

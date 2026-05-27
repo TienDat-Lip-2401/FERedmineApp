@@ -72,8 +72,8 @@ const bugsPercent = randomNumber();
           </button>
         </template>
 
-        <div class="menu-item edit" @click="handleEdit">Edit</div>
-        <div class="menu-item delete" @click="handleDelete">Delete</div>
+        <div class="menu-item edit" @click="handleEdit">{{ $t('common.edit') }}</div>
+        <div class="menu-item delete" @click="handleDelete">{{ $t('common.delete') }}</div>
       </BaseMenu>
     </div>
     <!-- Body -->
@@ -82,7 +82,7 @@ const bugsPercent = randomNumber();
         PM: <span>PM-{{ project.projectManagerId }}</span>
       </p>
       <div class="members-section">
-        <span class="members-label">Members:</span>
+        <span class="members-label">{{ $t('projects.members') }}:</span>
         <div class="avatar-group">
           <div
             v-for="(member, index) in project.members.slice(0, 4)"
@@ -102,21 +102,9 @@ const bugsPercent = randomNumber();
         </div>
       </div>
       <div class="stat-list">
-        <!-- <div class="stat-item" v-for="stat in project.stats" :key="stat.label">
-          <div class="stat-label">
-            <span>Progress: </span>
-            <span>75%</span>
-          </div>
-          <div class="progress-bar">
-            <div
-              class="progress-fill"
-              style="width: 75%;"
-            ></div>
-          </div>
-        </div> -->
         <div class="stat-item">
           <div class="stat-label">
-            <span>Progress:</span>
+            <span>{{ $t('common.progress') }}:</span>
             <span>75%</span>
           </div>
           <div class="progress-bar">
@@ -126,7 +114,7 @@ const bugsPercent = randomNumber();
 
         <div class="stat-item">
           <div class="stat-label">
-            <span>Tasks:</span>
+            <span>{{ $t('common.tasks') }}:</span>
             <span>42/50</span>
           </div>
           <div class="progress-bar">
@@ -136,7 +124,7 @@ const bugsPercent = randomNumber();
 
         <div class="stat-item">
           <div class="stat-label">
-            <span>Bugs:</span>
+            <span>{{ $t('common.bugs') }}:</span>
             <span>3/15</span>
           </div>
           <div class="progress-bar">
@@ -151,10 +139,10 @@ const bugsPercent = randomNumber();
     <!-- Footer -->
     <div class="card-footer">
       <span class="status-badge" :class="getStatusLabel(project.status)">
-        {{ getStatusLabel(project.status) }}
+        {{ $t('common.status.' + getStatusLabel(project.status).toLowerCase()) }}
       </span>
       <span class="timeline"
-        >Timeline:
+        >{{ $t('common.timeline') }}:
         <span class="time"
           >{{ formatDate(project.startDate) }} - {{ formatDate(project.endDate) }}</span
         ></span

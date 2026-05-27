@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/stores/userStore";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BasePagination from "@/components/common/BasePagination.vue";
@@ -10,15 +11,17 @@ import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 import trashIcon from "@/assets/icons/trash.svg";
 import editIcon from "@/assets/icons/edit.svg";
+
+const { t } = useI18n();
 const router = useRouter();
 const userStore = useUserStore();
 const modalStore = useModalStore();
 const isLoading = ref(false);
-const loadingText = ref("Đang tải dữ liệu...");
+const loadingText = ref(t("common.loading"));
 onMounted(async () => {
   try {
     isLoading.value = true;
-    loadingText.value = "Đang tải danh sách...";
+    loadingText.value = t("common.loading");
     await userStore.fetchUsers();
   } catch (error) {
     console.error("Lỗi khi tải User:", error);
@@ -112,7 +115,7 @@ const confirmDelete = async () => {
   try {
     // Bật Loading và đổi chữ
     isLoading.value = true;
-    loadingText.value = "Đang xóa người dùng...";
+    loadingText.value = t("users.delete_loading");
 
     const result = await userStore.deleteUser(userIdToDelete.value);
 
@@ -122,7 +125,7 @@ const confirmDelete = async () => {
       }
     } else {
       modalStore.showModal({
-        title: "Thất bại",
+        title: t("common.alert.failed"),
         message: result.message,
         type: "error",
       });
@@ -130,8 +133,8 @@ const confirmDelete = async () => {
   } catch (error) {
     const msg = error.message;
     modalStore.showModal({
-      title: "Thất bại",
-      message: msg || "Có lỗi xảy ra khi xóa!",
+      title: t("common.alert.failed"),
+      message: msg || t("users.delete_failed"),
       type: "error",
     });
   } finally {
@@ -144,32 +147,32 @@ const confirmDelete = async () => {
 <template>
   <div class="users-container">
     <div class="page-header">
-      <h1 class="page-title">Users</h1>
+      <h1 class="page-title">{{ $t("users.title") }}</h1>
       <BaseButton variant="danger" @click="handleCreateUser" class="btn-create">
-        + Create User
+        + {{ $t("users.create_title") }}
       </BaseButton>
     </div>
 
     <div class="filter-card">
       <div class="filter-group">
-        <span class="filter-label">Filter</span>
+        <span class="filter-label">{{ $t("users.filter") }}</span>
 
         <select v-model="searchField" class="filter-select field-select">
-          <option value="" disabled>-- Select field --</option>
-          <option value="name">Name</option>
-          <option value="email">Email</option>
-          <option value="code">Code</option>
+          <option value="" disabled>{{ $t("users.select_field") }}</option>
+          <option value="name">{{ $t("users.name") }}</option>
+          <option value="email">{{ $t("users.email") }}</option>
+          <option value="code">{{ $t("users.code") }}</option>
         </select>
 
         <BaseInput v-model="searchQuery" no-margin height="5.6rem" :disabled="!searchField" />
 
         <select v-model="statusFilter" class="filter-select status-select">
-          <option value="">All Status</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
+          <option value="">{{ $t("users.all_status") }}</option>
+          <option value="Active">{{ $t("common.status.active") }}</option>
+          <option value="Inactive">{{ $t("common.status.inactive") }}</option>
         </select>
 
-        <BaseButton variant="danger" class="filter-button"> Search </BaseButton>
+        <BaseButton variant="danger" class="filter-button"> {{ $t("common.search") }} </BaseButton>
       </div>
     </div>
 
@@ -177,14 +180,14 @@ const confirmDelete = async () => {
       <table class="user-table">
         <thead>
           <tr>
-            <th>No</th>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone number</th>
-            <th>Join date</th>
-            <th>Status</th>
-            <th class="text-center">Action</th>
+            <th>{{ $t("common.no") }}</th>
+            <th>{{ $t("users.code") }}</th>
+            <th>{{ $t("users.name") }}</th>
+            <th>{{ $t("users.email") }}</th>
+            <th>{{ $t("users.phone") }}</th>
+            <th>{{ $t("users.join_date") }}</th>
+            <th>{{ $t("users.status") }}</th>
+            <th class="text-center">{{ $t("common.action") }}</th>
           </tr>
         </thead>
         <tbody>
@@ -197,7 +200,7 @@ const confirmDelete = async () => {
             <td>{{ user.joinDate }}</td>
             <td>
               <span :class="['status-tag', user.status ? 'active' : 'inactive']">
-                {{ user.status ? "Active" : "Inactive" }}
+                {{ user.status ? $t("common.status.active") : $t("common.status.inactive") }}
               </span>
             </td>
             <td class="action-btns">
@@ -210,7 +213,7 @@ const confirmDelete = async () => {
             </td>
           </tr>
           <tr v-if="paginatedUsers.length === 0">
-            <td colspan="8" class="empty-state">No users found.</td>
+            <td colspan="8" class="empty-state">{{ $t("users.no_users") }}</td>
           </tr>
         </tbody>
       </table>

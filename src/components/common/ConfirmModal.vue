@@ -15,8 +15,8 @@ import BaseButton from "@/components/common/BaseButton.vue";
     <div class="confirm-card">
       <p class="confirm-text">{{ message }}</p>
       <div class="confirm-actions">
-        <BaseButton @click="emit('close')" variant="outline">Cancel</BaseButton>
-        <BaseButton @click="emit('confirm')" variant="danger">Delete</BaseButton>
+        <BaseButton @click="emit('close')" variant="outline">{{ $t('common.cancel') }}</BaseButton>
+        <BaseButton @click="emit('confirm')" variant="danger">{{ $t('common.delete') }}</BaseButton>
       </div>
     </div>
   </div>

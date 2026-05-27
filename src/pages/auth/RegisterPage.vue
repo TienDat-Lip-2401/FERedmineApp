@@ -1,10 +1,12 @@
 <script setup>
 import { reactive, ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/authStore";
 import BaseButton from "@/components/common/BaseButton.vue";
 import BaseInput from "@/components/common/BaseInput.vue";
 
+const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
 const formData = reactive({
@@ -55,11 +57,11 @@ const handleRegister = async () => {
   apiErrors.confirmPassword = "";
   apiErrors.name="";
   if (!formData.name.trim()) {
-    apiErrors.name = "Bạn chưa nhập tên!";
+    apiErrors.name = t("auth.register.err_name_empty");
     return;
   }
   if (formData.password !== formData.confirmPassword) {
-    apiErrors.confirmPassword = "Mật khẩu nhập lại không khớp!";
+    apiErrors.confirmPassword = t("auth.register.err_password_mismatch");
     return;
   }
 
@@ -72,7 +74,7 @@ const handleRegister = async () => {
       confirmPassword: formData.confirmPassword,
     });
 
-    alert("Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
+    alert(t("auth.register.success_msg"));
     sessionStorage.removeItem("register_form_draft");
     router.push("/auth/login"); // Chuyển hướng về trang Login
   } catch (error) {
@@ -96,12 +98,12 @@ const handleRegister = async () => {
 
 <template>
   <div class="auth-wrapper">
-    <h1 class="auth-title">Register</h1>
+    <h1 class="auth-title">{{ $t("auth.register.title") }}</h1>
 
     <form @submit.prevent="handleRegister" novalidate>
       <div class="form-group">
         <BaseInput
-          label="Full Name"
+          :label="$t('auth.register.fullname')"
           id="name"
           v-model="formData.name"
           type="text"
@@ -115,7 +117,7 @@ const handleRegister = async () => {
 
       <div class="form-group">
         <BaseInput
-          label="Email"
+          :label="$t('auth.register.email')"
           id="email"
           v-model="formData.email"
           type="email"
@@ -129,7 +131,7 @@ const handleRegister = async () => {
 
       <div class="form-group form-group-password">
         <BaseInput
-          label="Password"
+          :label="$t('auth.register.password')"
           id="password"
           v-model="formData.password"
           :type="isPasswordHidden ? 'password' : 'text'"
@@ -137,7 +139,7 @@ const handleRegister = async () => {
           required
         />
         <button type="button" class="btn btn-link toggle-password" @click="togglePassword">
-          {{ isPasswordHidden ? "Show" : "Hide" }}
+          {{ isPasswordHidden ? $t("auth.register.show") : $t("auth.register.hide") }}
         </button>
         <Transition name="slide-fade">
           <span v-if="apiErrors.password" class="error-text">{{ apiErrors.password }}</span>
@@ -146,7 +148,7 @@ const handleRegister = async () => {
 
       <div class="form-group form-group-password" style="margin-bottom: 2.5rem">
         <BaseInput
-          label="Confirm Password"
+          :label="$t('auth.register.confirm_password')"
           id="confirmPassword"
           v-model="formData.confirmPassword"
           :type="isConfirmPasswordHidden ? 'password' : 'text'"
@@ -154,7 +156,7 @@ const handleRegister = async () => {
           required
         />
         <button type="button" class="btn btn-link toggle-password" @click="toggleConfirmPassword">
-          {{ isConfirmPasswordHidden ? "Show" : "Hide" }}
+          {{ isConfirmPasswordHidden ? $t("auth.register.show") : $t("auth.register.hide") }}
         </button>
         <Transition name="slide-fade">
           <span v-if="apiErrors.confirmPassword" class="error-text">{{
@@ -163,12 +165,12 @@ const handleRegister = async () => {
         </Transition>
       </div>
 
-      <BaseButton text="Create Account" type="submit" variant="auth" />
+      <BaseButton :text="$t('auth.register.btn')" type="submit" variant="auth" />
 
       <div class="auth-footer">
         <p class="auth-prompt">
-          <span>Already have an account? </span>
-          <router-link to="/auth/login" class="auth-link font-bold">Login here</router-link>
+          <span>{{ $t("auth.register.prompt") }}</span>
+          <router-link to="/auth/login" class="auth-link font-bold">{{ $t("auth.register.link") }}</router-link>
         </p>
       </div>
     </form>

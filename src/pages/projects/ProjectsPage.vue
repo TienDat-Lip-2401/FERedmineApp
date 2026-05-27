@@ -1,11 +1,14 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import BaseInput from "@/components/common/BaseInput.vue";
 import BasePagination from "@/components/common/BasePagination.vue";
 import ProjectCard from "@/components/project/ProjectCard.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
 import { useModalStore } from "@/stores/modalStore";
+
+const { t } = useI18n();
 const modalStore = useModalStore();
 const projectStore = useProjectStore();
 const currentPage = ref(1);
@@ -35,17 +38,17 @@ const handleConfirmDelete = async () => {
     isConfirmOpen.value = false;
     projectIdToDelete.value = null;
     modalStore.showModal({
-      title: "Thành công",
-      message: "Đã xóa dự án thành công!",
+      title: t("common.alert.success"),
+      message: t("projects.delete_success"),
       type: "success",
     });
   } catch (error) {
     isConfirmOpen.value = false;
     projectIdToDelete.value = null;
-    const errorMessage = error.response?.data?.message || "Xóa dự án thất bại. Vui lòng thử lại!";
+    const errorMessage = error.response?.data?.message || t("projects.delete_failed");
 
     modalStore.showModal({
-      title: "Từ chối",
+      title: t("common.alert.failed"),
       message: errorMessage,
       type: "error",
     });
@@ -89,9 +92,9 @@ const totalPages = computed(() => {
   <div class="projects-wrapper">
     <!-- Header -->
     <div class="page-header">
-      <h1 class="page-title">Projects</h1>
+      <h1 class="page-title">{{ $t("projects.title") }}</h1>
       <div class="search-box">
-        <BaseInput placeholder="Search" width="42rem" height="4.5rem" v-model="searchQuery" />
+        <BaseInput :placeholder="$t('common.search')" width="42rem" height="4.5rem" v-model="searchQuery" />
       </div>
     </div>
     <!-- Project List -->
@@ -114,8 +117,7 @@ const totalPages = computed(() => {
     <ConfirmModal
       v-if="isConfirmOpen"
       :isOpen="isConfirmOpen"
-      title="Confirm Deletion"
-      message="Are you sure you want to delete this project?"
+      :message="$t('projects.confirm_delete_project')"
       @confirm="handleConfirmDelete"
       @close="isConfirmOpen = false"
     />
