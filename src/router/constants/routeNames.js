@@ -1,0 +1,18 @@
+export const ROUTE_NAMES = {
+  LOGIN: "Login",
+  FORGOT_PASSWORD: "ForgotPassword",
+  RESET_PASSWORD: "ResetPassword",
+  HOME: "Home",
+  PROJECT_LIST: "ProjectList",
+  CREATE_PROJECT: "CreateProject",
+  UPDATE_PROJECT: "UpdateProject",
+  USER_LIST: "UserList",
+  CREATE_USER: "CreateUser",
+  UPDATE_USER: "UpdateUser",
+  PROFILE_USER: "ProfileUser",
+  PERFORMANCE: "Performance",
+  TASK: "Task",
+  WORK_LOG: "WorkLogs",
+  POSITIONS: "Positions",
+  ROLES: "Roles",
+};

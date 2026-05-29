@@ -6,15 +6,18 @@ export const useProjectStore = defineStore("project", {
     projects: [],
     availableUsers: [], // Lưu danh sách user chưa tham gia dự án (cho Modal)
     isLoading: false,
+    isLoaded: false
   }),
   actions: {
-    async fetchProjects() {
+    async fetchProjects(forceRefresh = false) {
+      if(this.isLoaded && !forceRefresh) return
       this.isLoading = true;
       try {
         const res = await projectService.getMyProjects();
         console.log(res.data);
         // Giả định Backend trả về cấu trúc có response.data.data (tùy theo cách bạn bọc ApiResponse)
         this.projects = res.data || [];
+        this.isLoaded= true;
         return res;
       } finally {
         this.isLoading = false;

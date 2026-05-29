@@ -4,7 +4,9 @@ import { ref } from "vue";
 export const useAuthStore = defineStore("auth", () => {
   const savedUser = localStorage.getItem("user");
   const user = ref(savedUser ? JSON.parse(savedUser) : null);
+  const isAuthenticated = ref(!!savedUser);
   const setAuthData = (userData) => {
+    isAuthenticated.value = true;
     user.value = userData;
     localStorage.setItem("user", JSON.stringify(userData));
   };
@@ -15,14 +17,13 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = async () => {
     try {
-      // 1. Báo backend xóa Cookie và hủy phiên
       await authService.logout();
     } catch (error) {
       console.error("Lỗi khi đăng xuất backend:", error);
     } finally {
-      // 2. Dọn dẹp Frontend (dù API có lỗi hay không thì vẫn ép out)
       user.value = null;
       localStorage.removeItem("user");
+      isAuthenticated.value = false;
     }
   };
   const register = async (userData) => {
@@ -66,5 +67,6 @@ export const useAuthStore = defineStore("auth", () => {
     resetPassword,
     clearFirstLoginFlag,
     refreshToken,
+    isAuthenticated,
   };
 });

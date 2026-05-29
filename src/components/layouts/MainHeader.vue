@@ -14,7 +14,7 @@ const handleLogout = async () => {
   router.push({ name: "Login" });
 };
 const goToProfile = () => {
-  router.push("/users/profile");
+  router.push("/users/my-profile");
 };
 const goToResetPassword = () => {
   router.push("/auth/reset-password");
@@ -33,8 +33,8 @@ const toggleLanguage = () => {
     <div class="header-right">
       <!-- Language Switcher Widget -->
       <button class="lang-selector" @click="toggleLanguage" type="button">
-        <span class="flag-icon">{{ locale === 'vi' ? '🇻🇳' : '🇬🇧' }}</span>
-        <span class="lang-text">{{ locale === 'vi' ? 'VI' : 'EN' }}</span>
+        <span class="flag-icon">{{ locale === "vi" ? "🇻🇳" : "🇬🇧" }}</span>
+        <span class="lang-text">{{ locale === "vi" ? "VI" : "EN" }}</span>
       </button>
 
       <div class="notification-icon">
@@ -47,7 +47,9 @@ const toggleLanguage = () => {
         <template #trigger>
           <div class="user-profile">
             <div class="user-info">
-              <p class="user-name">{{ authStore.user?.name || $t("common.header.not_logged_in") }}</p>
+              <p class="user-name">
+                {{ authStore.user?.name || $t("common.header.not_logged_in") }}
+              </p>
               <p class="user-role">
                 {{
                   authStore.user?.positions?.includes("Admin")
@@ -61,7 +63,9 @@ const toggleLanguage = () => {
             <img src="@/assets/images/avatar.png" alt="Avatar" class="user-avatar" />
           </div>
         </template>
-        <div class="menu-item" @click="goToProfile"><i class="icon-edit"></i> {{ $t("common.header.edit_profile") }}</div>
+        <div class="menu-item" @click="goToProfile">
+          <i class="icon-edit"></i> {{ $t("common.header.edit_profile") }}
+        </div>
         <div class="menu-item" @click="goToResetPassword">
           <i class="icon-edit"></i> {{ $t("common.header.change_password") }}
         </div>

@@ -5,15 +5,18 @@ import { userService } from "@/services/user";
 export const useUserStore = defineStore("user", () => {
   const users = ref([]);
   const isLoading = ref(false);
+  const isLoaded = ref(false);
   const error = ref(null);
   const editingUser = ref(null);
-  const fetchUsers = async () => {
+  const fetchUsers = async (forceRefresh = false) => {
+    if (isLoaded.value && !forceRefresh) return;
     isLoading.value = true;
     error.value = null;
     try {
       const response = await userService.getAll();
       if (response.statusCode === 200) {
         users.value = response.data;
+        isLoaded.value = true;
       } else {
         error.value = response.message || "Không thể lấy danh sách người dùng";
       }
@@ -38,9 +41,9 @@ export const useUserStore = defineStore("user", () => {
       return { success: false, message: errorMsg };
     }
   };
-  const getMe = async () => {
+  const getMyProfile = async () => {
     try {
-      const response = await userService.getMe();
+      const response = await userService.getMyProfile();
       if (response.statusCode === 200) {
         return response.data;
       } else {
@@ -114,11 +117,11 @@ export const useUserStore = defineStore("user", () => {
     error,
     fetchUsers,
     deleteUser,
-    getMe,
+    getMyProfile,
     updateUser,
     checkEmailExists,
     addUser,
     fetchUserDetail,
-    editingUser
+    editingUser,
   };
 });

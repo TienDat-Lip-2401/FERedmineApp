@@ -50,7 +50,7 @@ const positions = ref([]);
 onMounted(async () => {
   try {
     isLoading.value = true;
-    const response = await userStore.getMe();
+    const response = await userStore.getMyProfile();
     console.log("User info response:", response);
     if (response) {
       const userData = response;
@@ -191,9 +191,19 @@ const handleSave = async () => {
     <h2 class="page-title">{{ $t("users.edit_profile") }}</h2>
 
     <div class="form-card">
-      <BaseInput :label="$t('users.code')" v-model="form.code" required :placeholder="$t('users.code_placeholder')" />
+      <BaseInput
+        :label="$t('users.code')"
+        v-model="form.code"
+        required
+        :placeholder="$t('users.code_placeholder')"
+      />
 
-      <BaseInput :label="$t('users.name')" v-model="form.name" required :placeholder="$t('users.name_placeholder')" />
+      <BaseInput
+        :label="$t('users.name')"
+        v-model="form.name"
+        required
+        :placeholder="$t('users.name_placeholder')"
+      />
 
       <BaseInput
         :label="$t('users.email')"
@@ -229,7 +239,9 @@ const handleSave = async () => {
       <div class="positions-section">
         <div class="section-header">
           <label class="field-label">{{ $t("users.position") }}</label>
-          <button class="btn-assign" @click="isAssignModalOpen = true">+ {{ $t("users.assign_position") }}</button>
+          <button class="btn-assign" @click="isAssignModalOpen = true">
+            + {{ $t("users.assign_position") }}
+          </button>
         </div>
 
         <table class="positions-table">

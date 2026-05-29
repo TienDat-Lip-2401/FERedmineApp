@@ -18,4 +18,7 @@ export const userService = {
   getById: (id) => {
     return http.get(`/user/${id}`);
   },
+  getMyProfile: () => {
+    return http.get(`user/my-profile`);
+  },
 };
