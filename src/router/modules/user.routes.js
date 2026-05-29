@@ -22,7 +22,7 @@ export const userRoutes = [
       },
       {
         path: "my-profile",
-        name: ROUTE_NAMES.UPDATE_USER,
+        name: ROUTE_NAMES.PROFILE_USER,
         component: () => import("@/pages/user/ProfilePage.vue"),
       },
     ],
