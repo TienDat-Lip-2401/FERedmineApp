@@ -1,0 +1,1 @@
+var e=`/FERedmineApp/assets/logo-BgqmzgBi.png`;export{e as t};

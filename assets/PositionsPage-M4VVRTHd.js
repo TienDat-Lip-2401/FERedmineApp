@@ -1,0 +1,1 @@
+import{O as e,f as t,t as n}from"./_plugin-vue_export-helper-CyI9GwL3.js";var r={};function i(n,r){return e(),t(`h1`,null,`Positions`)}var a=n(r,[[`render`,i]]);export{a as default};
