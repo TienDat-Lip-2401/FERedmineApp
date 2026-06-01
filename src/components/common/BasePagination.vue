@@ -48,7 +48,9 @@ const changePage = (page) => {
   }, 200);
 };
 const onPageSizeChange = (event) => {
-  emit("update:pageSize", Number(event.target.value));
+  const newSize = Number(event.target.value);
+  emit("update:pageSize", newSize);
+  emit("update:current", 1);
 };
 </script>
 

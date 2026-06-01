@@ -7,8 +7,8 @@ export const projectService = {
   },
 
   // 2. Lấy danh sách dự án của tài khoản đang đăng nhập
-  getMyProjects: () => {
-    return http.get("/project/my-projects");
+  getMyProjects: (page, size, search) => {
+    return http.get(`/project/my-projects?page=${page}&size=${size}&search=${search}`);
   },
 
   // 3. Tạo dự án mới (có thể gửi kèm mảng member ban đầu)

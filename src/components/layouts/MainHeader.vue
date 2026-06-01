@@ -19,9 +19,9 @@ const goToProfile = () => {
 const goToResetPassword = () => {
   router.push("/auth/reset-password");
 };
-const toggleLanguage = () => {
-  locale.value = locale.value === "vi" ? "en" : "vi";
-  localStorage.setItem("locale", locale.value);
+const changeLanguage = (lang) => {
+  locale.value = lang;
+  localStorage.setItem("locale", lang);
 };
 </script>
 
@@ -32,10 +32,21 @@ const toggleLanguage = () => {
     </div>
     <div class="header-right">
       <!-- Language Switcher Widget -->
-      <button class="lang-selector" @click="toggleLanguage" type="button">
-        <span class="flag-icon">{{ locale === "vi" ? "🇻🇳" : "🇬🇧" }}</span>
-        <span class="lang-text">{{ locale === "vi" ? "VI" : "EN" }}</span>
-      </button>
+      <BaseMenu class="lang-menu">
+        <template #trigger>
+          <button class="lang-selector" type="button">
+            <span class="flag-icon">{{ locale === "vi" ? "🇻🇳" : "🇬🇧" }}</span>
+            <span class="lang-text">{{ locale === "vi" ? "VI" : "EN" }}</span>
+            <span class="chevron-icon">▼</span>
+          </button>
+        </template>
+        <div class="menu-item" :class="{ active: locale === 'vi' }" @click="changeLanguage('vi')">
+          <span class="flag-icon-menu">🇻🇳</span> Tiếng Việt
+        </div>
+        <div class="menu-item" :class="{ active: locale === 'en' }" @click="changeLanguage('en')">
+          <span class="flag-icon-menu">🇬🇧</span> English
+        </div>
+      </BaseMenu>
 
       <div class="notification-icon">
         <i class="icon-bell">
@@ -43,7 +54,7 @@ const toggleLanguage = () => {
         </i>
         <span class="badge">10</span>
       </div>
-      <BaseMenu>
+      <BaseMenu class="user-menu">
         <template #trigger>
           <div class="user-profile">
             <div class="user-info">
@@ -187,8 +198,50 @@ const toggleLanguage = () => {
     -webkit-user-drag: none;
   }
 }
-:deep(.menu-content) {
+.user-menu :deep(.menu-content) {
   top: 80%;
   right: -1px;
+}
+.chevron-icon {
+  font-size: 0.9rem;
+  color: #787486;
+  transition: transform 0.2s ease;
+  margin-left: 2px;
+}
+.lang-selector:hover .chevron-icon {
+  color: #0d062d;
+}
+.flag-icon-menu {
+  font-size: 1.6rem;
+  margin-right: 10px;
+  line-height: 1;
+}
+.lang-menu :deep(.menu-content) {
+  top: 100% !important;
+  right: 0 !important;
+  min-width: 140px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: 8px;
+}
+.lang-menu :deep(.menu-item) {
+  padding: 10px 16px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #5d7285;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.lang-menu :deep(.menu-item:hover) {
+  background: #f8fafc;
+  color: #0d062d;
+}
+.lang-menu :deep(.menu-item.active) {
+  background: #f1f5f9;
+  color: #0d062d;
+  font-weight: 600;
 }
 </style>

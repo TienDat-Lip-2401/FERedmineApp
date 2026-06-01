@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import BaseInput from "@/components/common/BaseInput.vue";
 import BasePagination from "@/components/common/BasePagination.vue";
@@ -7,26 +8,20 @@ import ProjectCard from "@/components/project/ProjectCard.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import { useProjectStore } from "@/stores/projectStore.js";
 import { useModalStore } from "@/stores/modalStore";
-
 const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
 const modalStore = useModalStore();
 const projectStore = useProjectStore();
-const currentPage = ref(1);
+const currentPage = ref(Number(route.query.page) || 1);
 // --- Tìm kiếm ---
-const searchQuery = ref("");
+const searchQuery = ref(route.query.search || "");
 const debouncedSearchQuery = ref("");
 let debounceTimeout = null;
 // --- Phân trang ---
-const itemsPerPage = ref(6);
+const itemsPerPage = ref(Number(route.query.size) || 6);
 const projectIdToDelete = ref(null);
 const isConfirmOpen = ref(false);
-onMounted(async () => {
-  try {
-    await projectStore.fetchProjects();
-  } catch (error) {
-    console.error("Lỗi khi load danh sách project:", error);
-  }
-});
 const openDeleteModal = (id) => {
   projectIdToDelete.value = id;
   isConfirmOpen.value = true;
@@ -58,9 +53,6 @@ const gridClass = computed(() => {
   console.log(itemsPerPage.value);
   return `grid-items-${itemsPerPage.value}`;
 });
-// watch([searchQuery, itemsPerPage], () => {
-//   currentPage.value = 1;
-// });
 watch(searchQuery, (newQuery) => {
   if (debounceTimeout) clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(() => {
@@ -68,24 +60,20 @@ watch(searchQuery, (newQuery) => {
     debouncedSearchQuery.value = newQuery;
   }, 300);
 });
-const paginatedProjects = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredProjects.value.slice(start, end);
-});
-const filteredProjects = computed(() => {
-  const list = projectStore.projects || [];
-  const query = (debouncedSearchQuery.value || "").toLowerCase().trim();
-  return list.filter((item) => {
-    const projectTitle = (item.title || "").toLowerCase();
-    return projectTitle.includes(query);
-  });
-});
-// 4. Tính tổng số trang (Dùng Math.ceil cho ngắn gọn thay vì if/else)
-const totalItems = computed(() => filteredProjects.value.length);
-const totalPages = computed(() => {
-  return totalItems.value > 0 ? Math.ceil(totalItems.value / itemsPerPage.value) : 1;
-});
+
+const paginatedProjects = computed(() => projectStore.projects);
+watch(
+  [currentPage, itemsPerPage, debouncedSearchQuery],
+  ([newCurrent, newSize, newSearch]) => {
+    projectStore.fetchProjects(newCurrent, newSize, newSearch);
+    router.replace({
+      query: { ...route.query, page: newCurrent, size: newSize, search: newSearch || undefined },
+    });
+  },
+  { immediate: true },
+);
+const totalPages = computed(() => projectStore.totalPages);
+const totalItems = computed(() => projectStore.totalItems);
 </script>
 
 <template>
@@ -94,7 +82,12 @@ const totalPages = computed(() => {
     <div class="page-header">
       <h1 class="page-title">{{ $t("projects.title") }}</h1>
       <div class="search-box">
-        <BaseInput :placeholder="$t('common.search')" width="42rem" height="4.5rem" v-model="searchQuery" />
+        <BaseInput
+          :placeholder="$t('common.search')"
+          width="42rem"
+          height="4.5rem"
+          v-model="searchQuery"
+        />
       </div>
     </div>
     <!-- Project List -->
@@ -110,8 +103,10 @@ const totalPages = computed(() => {
     <BasePagination
       :total="totalItems"
       :pages="totalPages"
-      v-model:current="currentPage"
-      v-model:pageSize="itemsPerPage"
+      :current="currentPage"
+      :pageSize="itemsPerPage"
+      @update:current="currentPage = $event"
+      @update:pageSize="itemsPerPage = $event"
     />
     <!-- Confirm Modal -->
     <ConfirmModal

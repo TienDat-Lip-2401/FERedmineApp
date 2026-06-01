@@ -6,19 +6,29 @@ export const useProjectStore = defineStore("project", {
     projects: [],
     availableUsers: [], // Lưu danh sách user chưa tham gia dự án (cho Modal)
     isLoading: false,
-    isLoaded: false
+    isLoaded: false,
+    totalItems: 0,
+    totalPages: 0,
+    currentPage: 1,
+    pageSize: 6,
   }),
   actions: {
-    async fetchProjects(forceRefresh = false) {
-      if(this.isLoaded && !forceRefresh) return
+    async fetchProjects(page = 1, size = 6,search = "", forceRefresh = false) {
+      if (this.isLoading) return;
+
       this.isLoading = true;
       try {
-        const res = await projectService.getMyProjects();
-        console.log(res.data);
-        // Giả định Backend trả về cấu trúc có response.data.data (tùy theo cách bạn bọc ApiResponse)
-        this.projects = res.data || [];
-        this.isLoaded= true;
+        const res = await projectService.getMyProjects(page, size, search);
+        const responseData = res.data;
+        this.projects = responseData.data;
+        this.totalItems = responseData.totalItems;
+        this.totalPages = responseData.totalPages;
+        this.currentPage = responseData.currentPage;
+        this.pageSize = size;
         return res;
+      } catch (error) {
+        console.error("Fetch projects failed:", error);
+        throw error;
       } finally {
         this.isLoading = false;
       }
@@ -55,7 +65,7 @@ export const useProjectStore = defineStore("project", {
 
         if (res.statusCode === 200) {
           // Xóa thành công thì lọc bỏ khỏi state hiện tại cho UI mượt mà
-          this.projects = this.projects.filter((p) => p.id !== projectId);
+          await this.fetchProjects(this.currentPage, 6, true);
         }
         return res;
       } catch (error) {
